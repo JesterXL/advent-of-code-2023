@@ -1,0 +1,23 @@
+{
+  "name": "advent-of-code-2023",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "elm-live src/Main.elm --dir=src --start-page=index.html --pushstate -- --output=src/elm.js",
+    "watch:css": "tailwindcss -c tailwind.config.cjs -i ./src/tailwind.css -o src/tailwind.build.css --watch",
+    "build": "elm make src/Main.elm --optimize --output=src/elm.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "elm": "^0.19.1-6",
+    "elm-live": "^4.0.2",
+    "tailwindcss": "^3.3.5"
+  },
+  "dependencies": {
+    "flowbite": "^2.2.0"
+  }
+}

@@ -1,0 +1,4 @@
+elm-stuff/
+node_modules/
+src/tailwind.build.css
+src/elm.js
