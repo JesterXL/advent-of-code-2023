@@ -9,7 +9,7 @@ import Html exposing (Html, a, b, button, code, div, h5, img, li, nav, pre, span
 import Html.Attributes exposing (class, href, src)
 import Html.Events exposing (onClick)
 import SyntaxHighlight exposing (elm, monokai, toBlockHtml, useTheme)
-import TwoThousandFifteen exposing (day1Part1Floor, day1Part1FloorCodeString, day1Part2BasementCharacter, day1Part2BasementCharacterCodeString, day2Part1WrappingPaper, day2Part2RibbonLength)
+import TwoThousandFifteen exposing (day1Part1Floor, day1Part1FloorCodeString, day1Part2BasementCharacter, day1Part2BasementCharacterCodeString, day2Part1WrappingPaper, day2Part1WrappingPaperCodeString, day2Part2RibbonLength, day2Part2RibbonLengthCodeString)
 import Url
 import Url.Parser exposing ((</>), (<?>), map, oneOf, parse, s, string, top)
 import Url.Parser.Query as Query
@@ -165,21 +165,29 @@ view model =
                                 ]
 
                         Just 2 ->
-                            div [ class "format" ]
+                            div []
                                 [ tabs2015 2
-                                , div [ class "m-6 block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700" ]
-                                    [ button
-                                        [ class "ext-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                                        , onClick ParseFloors
+                                , div [ class "flex flex-row gap-6 p-6" ]
+                                    [ div [ class "flex flex-col gap-6 w-[460px] block p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700" ]
+                                        [ h5 [ class "mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white" ] [ text "Wrapping Paper" ]
+                                        , div [ class "font-normal text-gray-700 dark:text-gray-400" ] [ text ("Floor: " ++ formatInt model.warmups.floor) ]
+                                        , button
+                                            [ class "ext-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                                            , onClick ParseFloors
+                                            ]
+                                            [ text "Calculate Floor" ]
+                                        , elmCode day2Part1WrappingPaperCodeString
                                         ]
-                                        [ text "Calculate Floor" ]
-                                    , div [ class "font-normal text-gray-700 dark:text-gray-400" ] [ text ("Floor: " ++ formatInt model.warmups.floor) ]
-                                    , button
-                                        [ class "ext-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                                        , onClick ParseBasementCharacterPosition
+                                    , div [ class "flex flex-col gap-6 w-[540px] block p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700" ]
+                                        [ h5 [ class "mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white" ] [ text "Wrapping Paper" ]
+                                        , div [ class "font-normal text-gray-700 dark:text-gray-400" ] [ text ("Basement Position: " ++ formatInt model.warmups.basementCharacter) ]
+                                        , button
+                                            [ class "ext-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                                            , onClick ParseBasementCharacterPosition
+                                            ]
+                                            [ text "Calculate Basement Character Position" ]
+                                        , elmCode day2Part2RibbonLengthCodeString
                                         ]
-                                        [ text "Calculate Basement Character Position" ]
-                                    , div [ class "font-normal text-gray-700 dark:text-gray-400" ] [ text ("Basement Position: " ++ formatInt model.warmups.basementCharacter) ]
                                     ]
                                 ]
 

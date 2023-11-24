@@ -4,7 +4,9 @@ module TwoThousandFifteen exposing
     , day1Part2BasementCharacter
     , day1Part2BasementCharacterCodeString
     , day2Part1WrappingPaper
+    , day2Part1WrappingPaperCodeString
     , day2Part2RibbonLength
+    , day2Part2RibbonLengthCodeString
     )
 
 import Array
@@ -147,13 +149,16 @@ day2Part1WrappingPaper =
             (\dimensions ->
                 let
                     width =
-                        Array.get 0 dimensions |> Maybe.withDefault 0
+                        Array.get 0 dimensions
+                            |> Maybe.withDefault 0
 
                     height =
-                        Array.get 1 dimensions |> Maybe.withDefault 0
+                        Array.get 1 dimensions
+                            |> Maybe.withDefault 0
 
                     length =
-                        Array.get 2 dimensions |> Maybe.withDefault 0
+                        Array.get 2 dimensions
+                            |> Maybe.withDefault 0
 
                     first =
                         length * width
@@ -174,6 +179,61 @@ day2Part1WrappingPaper =
                 (first + second + third) * 2 + slack
             )
         |> List.sum
+
+
+day2Part1WrappingPaperCodeString : String
+day2Part1WrappingPaperCodeString =
+    """
+    "2x3x4
+    1x1x10"
+        |> String.split ""
+        |> List.map
+            (\\dimensions ->
+                dimensions
+                    |> String.split "x"
+                    |> List.map
+                        (\\char ->
+                            char
+                                |> String.toInt
+                                |> Maybe.withDefault 0
+                        )
+                    |> Array.fromList
+            )
+        |> List.map
+            (\\dimensions ->
+                let
+                    width =
+                        Array.get 0 dimensions
+                            |> Maybe.withDefault 0
+
+                    height =
+                        Array.get 1 dimensions
+                            |> Maybe.withDefault 0
+
+                    length =
+                        Array.get 2 dimensions
+                            |> Maybe.withDefault 0
+
+                    first =
+                        length * width
+
+                    second =
+                        width * height
+
+                    third =
+                        height * length
+
+                    slack =
+                        [ first, second, third ]
+                            |> List.sort
+                            |> Array.fromList
+                            |> Array.get 0
+                            |> Maybe.withDefault 0
+                in
+                (first + second + third) * 2 + slack
+            )
+        |> List.sum
+        """
 
 
 day2Part2RibbonLength : Int
@@ -198,13 +258,16 @@ day2Part2RibbonLength =
             (\dimensions ->
                 let
                     width =
-                        Array.get 0 dimensions |> Maybe.withDefault 0
+                        Array.get 0 dimensions
+                            |> Maybe.withDefault 0
 
                     height =
-                        Array.get 1 dimensions |> Maybe.withDefault 0
+                        Array.get 1 dimensions
+                            |> Maybe.withDefault 0
 
                     length =
-                        Array.get 2 dimensions |> Maybe.withDefault 0
+                        Array.get 2 dimensions
+                            |> Maybe.withDefault 0
 
                     ( shortA, shortB ) =
                         [ width, height, length ]
@@ -213,10 +276,12 @@ day2Part2RibbonLength =
                             |> (\sides ->
                                     let
                                         shortFirst =
-                                            Array.get 0 sides |> Maybe.withDefault 0
+                                            Array.get 0 sides
+                                                |> Maybe.withDefault 0
 
                                         shortSecond =
-                                            Array.get 1 sides |> Maybe.withDefault 0
+                                            Array.get 1 sides
+                                                |> Maybe.withDefault 0
                                     in
                                     Tuple.pair shortFirst shortSecond
                                )
@@ -230,6 +295,69 @@ day2Part2RibbonLength =
                 ribbon + bow
             )
         |> List.sum
+
+
+day2Part2RibbonLengthCodeString : String
+day2Part2RibbonLengthCodeString =
+    """
+    "2x3x4
+    1x1x10"
+    |> String.split "
+"
+    |> List.map
+        (\\dimensions ->
+            dimensions
+                |> String.split "x"
+                |> List.map
+                    (\\char ->
+                        char
+                            |> String.toInt
+                            |> Maybe.withDefault 0
+                    )
+                |> Array.fromList
+        )
+    |> List.map
+        (\\dimensions ->
+            let
+                width =
+                    Array.get 0 dimensions 
+                    |> Maybe.withDefault 0
+
+                height =
+                    Array.get 1 dimensions 
+                    |> Maybe.withDefault 0
+
+                length =
+                    Array.get 2 dimensions 
+                    |> Maybe.withDefault 0
+
+                ( shortA, shortB ) =
+                    [ width, height, length ]
+                        |> List.sort
+                        |> Array.fromList
+                        |> (\\sides ->
+                                let
+                                    shortFirst =
+                                        Array.get 0 sides 
+                                        |> Maybe.withDefault 0
+
+                                    shortSecond =
+                                        Array.get 1 sides 
+                                        |> Maybe.withDefault 0
+                                in
+                                Tuple.pair shortFirst shortSecond
+                            )
+
+                ribbon =
+                    shortA + shortA + shortB + shortB
+
+                bow =
+                    width * height * length
+            in
+            ribbon + bow
+        )
+    |> List.sum
+    """
 
 
 day2LargeInput : String
