@@ -302,8 +302,7 @@ day2Part2RibbonLengthCodeString =
     """
     "2x3x4
     1x1x10"
-    |> String.split "
-"
+    |> String.split ""
     |> List.map
         (\\dimensions ->
             dimensions
