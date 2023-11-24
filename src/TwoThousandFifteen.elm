@@ -1,4 +1,11 @@
-module TwoThousandFifteen exposing (day1Part1Floor, day1Part2BasementCharacter, day2Part1WrappingPaper, day2Part2RibbonLength)
+module TwoThousandFifteen exposing
+    ( day1Part1Floor
+    , day1Part1FloorCodeString
+    , day1Part2BasementCharacter
+    , day1Part2BasementCharacterCodeString
+    , day2Part1WrappingPaper
+    , day2Part2RibbonLength
+    )
 
 import Array
 
@@ -10,7 +17,7 @@ day1Part1Floor =
     -- "(((" -- 3
     -- "(()(()(" -- 3
     -- 232, 1st try, OH YEAH
-    largeInput2015Day1
+    "(()(()("
         |> String.split ""
         |> List.map
             (\char ->
@@ -21,6 +28,21 @@ day1Part1Floor =
                     -1
             )
         |> List.sum
+
+
+day1Part1FloorCodeString : String
+day1Part1FloorCodeString =
+    """"(()(()("
+    |> String.split ""
+    |> List.map
+        (\\char ->
+            if char == "(" then
+                1
+
+            else
+                -1
+        )
+    |> List.sum"""
 
 
 day1Part2BasementCharacter : Int
@@ -42,16 +64,57 @@ day1Part2BasementCharacter =
         |> List.foldl
             (\increment acc ->
                 if acc.basementYet == False && acc.floor + increment == -1 then
-                    { acc | floor = acc.floor + increment, position = acc.position + 1, basementYet = True }
+                    { acc
+                        | floor = acc.floor + increment
+                        , position = acc.position + 1
+                        , basementYet = True
+                    }
 
                 else if acc.basementYet == False then
-                    { acc | floor = acc.floor + increment, position = acc.position + 1 }
+                    { acc
+                        | floor = acc.floor + increment
+                        , position = acc.position + 1
+                    }
 
                 else
                     acc
             )
             { floor = 0, position = 0, basementYet = False }
         |> .position
+
+
+day1Part2BasementCharacterCodeString : String
+day1Part2BasementCharacterCodeString =
+    """"()())"
+    |> String.split ""
+    |> List.map
+        (\\char ->
+            if char == "(" then
+                1
+
+            else
+                -1
+        )
+    |> List.foldl
+        (\\increment acc ->
+            if acc.basementYet == False && acc.floor + increment == -1 then
+                { acc
+                    | floor = acc.floor + increment
+                    , position = acc.position + 1
+                    , basementYet = True
+                }
+
+            else if acc.basementYet == False then
+                { acc
+                    | floor = acc.floor + increment
+                    , position = acc.position + 1
+                }
+
+            else
+                acc
+        )
+        { floor = 0, position = 0, basementYet = False }
+    |> .position"""
 
 
 largeInput2015Day1 : String

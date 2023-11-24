@@ -5,11 +5,11 @@ import Browser.Dom exposing (Error(..))
 import Browser.Navigation as Nav
 import FormatNumber exposing (format)
 import FormatNumber.Locales exposing (Decimals(..), usLocale)
-import Html exposing (Html, a, b, button, code, div, img, li, nav, pre, span, text, ul)
+import Html exposing (Html, a, b, button, code, div, h5, img, li, nav, pre, span, text, ul)
 import Html.Attributes exposing (class, href, src)
 import Html.Events exposing (onClick)
 import SyntaxHighlight exposing (elm, monokai, toBlockHtml, useTheme)
-import TwoThousandFifteen exposing (day1Part1Floor, day1Part2BasementCharacter, day2Part1WrappingPaper, day2Part2RibbonLength)
+import TwoThousandFifteen exposing (day1Part1Floor, day1Part1FloorCodeString, day1Part2BasementCharacter, day1Part2BasementCharacterCodeString, day2Part1WrappingPaper, day2Part2RibbonLength)
 import Url
 import Url.Parser exposing ((</>), (<?>), map, oneOf, parse, s, string, top)
 import Url.Parser.Query as Query
@@ -137,6 +137,33 @@ view model =
             , case model.route of
                 Warmup day ->
                     case day of
+                        Just 1 ->
+                            div []
+                                [ tabs2015 1
+                                , div [ class "flex flex-row gap-6 p-6" ]
+                                    [ div [ class "flex flex-col gap-6 w-[350px] block p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700" ]
+                                        [ h5 [ class "mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white" ] [ text "Wrapping Paper" ]
+                                        , div [ class "font-normal text-gray-700 dark:text-gray-400" ] [ text ("Wrapping Paper Square Feet: " ++ formatInt model.warmups.squareFeetOfWrappingPaper) ]
+                                        , button
+                                            [ class "ext-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                                            , onClick ParsePresentPaperSizes
+                                            ]
+                                            [ text "Calculate Wrapping Paper" ]
+                                        , elmCode day1Part1FloorCodeString
+                                        ]
+                                    , div [ class "flex flex-col gap-6 w-[620px] block p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700" ]
+                                        [ h5 [ class "mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white" ] [ text "Ribbon Length" ]
+                                        , div [ class "font-normal text-gray-700 dark:text-gray-400" ] [ text ("Ribbon Length: " ++ formatInt model.warmups.ribbonFeet) ]
+                                        , button
+                                            [ class "ext-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                                            , onClick ParseRibbonLength
+                                            ]
+                                            [ text "Ribbon Length" ]
+                                        , elmCode day1Part2BasementCharacterCodeString
+                                        ]
+                                    ]
+                                ]
+
                         Just 2 ->
                             div [ class "format" ]
                                 [ tabs2015 2
@@ -157,30 +184,7 @@ view model =
                                 ]
 
                         _ ->
-                            div []
-                                [ tabs2015 1
-                                , div [ class "m-6 block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700" ]
-                                    [ button
-                                        [ class "ext-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                                        , onClick ParsePresentPaperSizes
-                                        ]
-                                        [ text "Wrapping Paper" ]
-                                    , div [ class "font-normal text-gray-700 dark:text-gray-400" ] [ text ("Wrapping Paper Square Feet: " ++ formatInt model.warmups.squareFeetOfWrappingPaper) ]
-                                    , button
-                                        [ class "ext-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                                        , onClick ParseRibbonLength
-                                        ]
-                                        [ text "Ribbon Length" ]
-                                    , div [ class "font-normal text-gray-700 dark:text-gray-400" ] [ text ("Ribbon Length: " ++ formatInt model.warmups.ribbonFeet) ]
-                                    , div []
-                                        [ useTheme monokai
-                                        , elm "sup : String -> String"
-                                            |> Result.map (toBlockHtml (Just 1))
-                                            |> Result.withDefault
-                                                (pre [] [ code [] [ text "sup : String -> String" ] ])
-                                        ]
-                                    ]
-                                ]
+                            span [] []
 
                 TwoThousandTwentyThree day ->
                     case day of
@@ -313,6 +317,17 @@ formatInt value =
 formatNumber : Float -> String
 formatNumber value =
     format usLocale value
+
+
+elmCode : String -> Html Msg
+elmCode codeString =
+    div [ class "text-xs code" ]
+        [ useTheme monokai
+        , elm codeString
+            |> Result.map (toBlockHtml (Just 1))
+            |> Result.withDefault
+                (pre [] [ code [] [ text codeString ] ])
+        ]
 
 
 subscriptions : Model -> Sub Msg
