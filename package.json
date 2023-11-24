@@ -7,7 +7,13 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "elm-live src/Main.elm --dir=src --start-page=index.html --pushstate -- --output=src/elm.js",
     "watch:css": "tailwindcss -c tailwind.config.cjs -i ./src/tailwind.css -o src/tailwind.build.css --watch",
-    "build": "elm make src/Main.elm --optimize --output=src/elm.js"
+    "build": "npm run clean && npm run compile && npm run copy",
+    "clean": "rm -rf docs",
+    "compile": "npm run compile:elm && npm run compile:css:prod",
+    "compile:elm": "elm make src/Main.elm --output=src/elm.js",
+    "compile:css": "tailwindcss -c tailwind.config.cjs -i ./src/tailwind.css -o src/tailwind.build.css",
+    "compile:css:prod": "NODE_ENV=production npm run compile:css",
+    "copy": "mkdir docs && cp src/elm.js docs/elm.js && cp src/index.js docs/index.js && cp src/index.html docs/index.html && cp src/tailwind.build.css docs/tailwind.build.css && cp src/elm-hat.png docs/elm-hat.png"
   },
   "keywords": [],
   "author": "",
