@@ -5,7 +5,7 @@ import Browser.Navigation as Nav
 import Html exposing (Html, a, b, button, div, li, text, ul)
 import Html.Attributes exposing (class, href)
 import Html.Events exposing (onClick)
-import TwoThousandFifteen exposing (day1Part1Floor, day1Part2BasementCharacter, day2Part2WrappingPaper)
+import TwoThousandFifteen exposing (day1Part1Floor, day1Part2BasementCharacter, day2Part1WrappingPaper, day2Part2RibbonLength)
 import Url
 import Url.Parser exposing ((</>), map, oneOf, parse, s)
 
@@ -24,6 +24,7 @@ type alias Model =
     , floor : Int
     , basementCharacter : Int
     , squareFeetOfWrappingPaper : Int
+    , ribbonFeet : Int
     }
 
 
@@ -35,6 +36,7 @@ initialModel key url route =
     , floor = 0
     , basementCharacter = 0
     , squareFeetOfWrappingPaper = 0
+    , ribbonFeet = 0
     }
 
 
@@ -66,6 +68,7 @@ type Msg
     | ParseFloors
     | ParseBasementCharacterPosition
     | ParsePresentPaperSizes
+    | ParseRibbonLength
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -94,7 +97,10 @@ update msg model =
             ( { model | basementCharacter = day1Part2BasementCharacter }, Cmd.none )
 
         ParsePresentPaperSizes ->
-            ( { model | squareFeetOfWrappingPaper = day2Part2WrappingPaper }, Cmd.none )
+            ( { model | squareFeetOfWrappingPaper = day2Part1WrappingPaper }, Cmd.none )
+
+        ParseRibbonLength ->
+            ( { model | ribbonFeet = day2Part2RibbonLength }, Cmd.none )
 
 
 view : Model -> Browser.Document Msg
@@ -128,6 +134,12 @@ view model =
                             ]
                             [ text "Wrapping Paper" ]
                         , div [] [ text ("Wrapping Paper Square Feet: " ++ String.fromInt model.squareFeetOfWrappingPaper) ]
+                        , button
+                            [ class "ext-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                            , onClick ParseRibbonLength
+                            ]
+                            [ text "Ribbon Length" ]
+                        , div [] [ text ("Ribbon Length: " ++ String.fromInt model.ribbonFeet) ]
                         ]
 
                 Day1 ->
