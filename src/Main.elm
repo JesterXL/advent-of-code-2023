@@ -3,9 +3,12 @@ module Main exposing (main)
 import Browser
 import Browser.Dom exposing (Error(..))
 import Browser.Navigation as Nav
-import Html exposing (Html, a, b, button, div, img, li, nav, span, text, ul)
+import FormatNumber exposing (format)
+import FormatNumber.Locales exposing (Decimals(..), usLocale)
+import Html exposing (Html, a, b, button, code, div, img, li, nav, pre, span, text, ul)
 import Html.Attributes exposing (class, href, src)
 import Html.Events exposing (onClick)
+import SyntaxHighlight exposing (elm, monokai, toBlockHtml, useTheme)
 import TwoThousandFifteen exposing (day1Part1Floor, day1Part2BasementCharacter, day2Part1WrappingPaper, day2Part2RibbonLength)
 import Url
 import Url.Parser exposing ((</>), (<?>), map, oneOf, parse, s, string, top)
@@ -143,13 +146,13 @@ view model =
                                         , onClick ParseFloors
                                         ]
                                         [ text "Calculate Floor" ]
-                                    , div [ class "font-normal text-gray-700 dark:text-gray-400" ] [ text ("Floor: " ++ String.fromInt model.warmups.floor) ]
+                                    , div [ class "font-normal text-gray-700 dark:text-gray-400" ] [ text ("Floor: " ++ formatInt model.warmups.floor) ]
                                     , button
                                         [ class "ext-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
                                         , onClick ParseBasementCharacterPosition
                                         ]
                                         [ text "Calculate Basement Character Position" ]
-                                    , div [ class "font-normal text-gray-700 dark:text-gray-400" ] [ text ("Basement Position: " ++ String.fromInt model.warmups.basementCharacter) ]
+                                    , div [ class "font-normal text-gray-700 dark:text-gray-400" ] [ text ("Basement Position: " ++ formatInt model.warmups.basementCharacter) ]
                                     ]
                                 ]
 
@@ -162,13 +165,20 @@ view model =
                                         , onClick ParsePresentPaperSizes
                                         ]
                                         [ text "Wrapping Paper" ]
-                                    , div [ class "font-normal text-gray-700 dark:text-gray-400" ] [ text ("Wrapping Paper Square Feet: " ++ String.fromInt model.warmups.squareFeetOfWrappingPaper) ]
+                                    , div [ class "font-normal text-gray-700 dark:text-gray-400" ] [ text ("Wrapping Paper Square Feet: " ++ formatInt model.warmups.squareFeetOfWrappingPaper) ]
                                     , button
                                         [ class "ext-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
                                         , onClick ParseRibbonLength
                                         ]
                                         [ text "Ribbon Length" ]
-                                    , div [ class "font-normal text-gray-700 dark:text-gray-400" ] [ text ("Ribbon Length: " ++ String.fromInt model.warmups.ribbonFeet) ]
+                                    , div [ class "font-normal text-gray-700 dark:text-gray-400" ] [ text ("Ribbon Length: " ++ formatInt model.warmups.ribbonFeet) ]
+                                    , div []
+                                        [ useTheme monokai
+                                        , elm "sup : String -> String"
+                                            |> Result.map (toBlockHtml (Just 1))
+                                            |> Result.withDefault
+                                                (pre [] [ code [] [ text "sup : String -> String" ] ])
+                                        ]
                                     ]
                                 ]
 
@@ -295,13 +305,14 @@ navbarLinkSelectedStyle =
     "block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500"
 
 
+formatInt : Int -> String
+formatInt value =
+    format { usLocale | decimals = Exact 0 } (toFloat value)
 
--- <li>
---     <a href="#" class="block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500" aria-current="page">Home</a>
--- </li>
--- <li>
---     <a href="#" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">About</a>
--- </li>
+
+formatNumber : Float -> String
+formatNumber value =
+    format usLocale value
 
 
 subscriptions : Model -> Sub Msg
