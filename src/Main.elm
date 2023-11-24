@@ -2,12 +2,13 @@ module Main exposing (main)
 
 import Browser
 import Browser.Navigation as Nav
-import Html exposing (Html, a, b, button, div, li, text, ul)
-import Html.Attributes exposing (class, href)
+import Html exposing (Html, a, b, button, div, img, li, nav, span, text, ul)
+import Html.Attributes exposing (class, href, src)
 import Html.Events exposing (onClick)
 import TwoThousandFifteen exposing (day1Part1Floor, day1Part2BasementCharacter, day2Part1WrappingPaper, day2Part2RibbonLength)
 import Url
-import Url.Parser exposing ((</>), map, oneOf, parse, s)
+import Url.Parser exposing ((</>), (<?>), map, oneOf, parse, s, string, top)
+import Url.Parser.Query as Query
 
 
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
@@ -21,7 +22,12 @@ type alias Model =
     { key : Nav.Key
     , url : Url.Url
     , route : Route
-    , floor : Int
+    , warmups : Warmups
+    }
+
+
+type alias Warmups =
+    { floor : Int
     , basementCharacter : Int
     , squareFeetOfWrappingPaper : Int
     , ribbonFeet : Int
@@ -33,33 +39,32 @@ initialModel key url route =
     { key = key
     , url = url
     , route = route
-    , floor = 0
-    , basementCharacter = 0
-    , squareFeetOfWrappingPaper = 0
-    , ribbonFeet = 0
+    , warmups =
+        { floor = 0
+        , basementCharacter = 0
+        , squareFeetOfWrappingPaper = 0
+        , ribbonFeet = 0
+        }
     }
 
 
 type Route
-    = NotFound
-    | Day12015Warmup
-    | Day1
-    | Day2
+    = Warmup (Maybe Int)
+    | TwoThousandTwentyThree (Maybe Int)
 
 
 routeParser : Url.Parser.Parser (Route -> a) a
 routeParser =
     oneOf
-        [ map Day12015Warmup (s "warmup")
-        , map Day1 (s "day1")
-        , map Day2 (s "day2")
+        [ map Warmup (s "2015" <?> Query.int "day")
+        , map TwoThousandTwentyThree (s "2023" <?> Query.int "day")
         ]
 
 
 parseRoute : Url.Url -> Route
 parseRoute url =
     parse routeParser url
-        |> Maybe.withDefault NotFound
+        |> Maybe.withDefault (TwoThousandTwentyThree (Just 1))
 
 
 type Msg
@@ -73,6 +78,10 @@ type Msg
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
+    let
+        warmup =
+            model.warmups
+    in
     case msg of
         LinkClicked urlRequest ->
             case urlRequest of
@@ -88,80 +97,160 @@ update msg model =
                     ( model, Nav.load href )
 
         UrlChanged url ->
+            let
+                _ =
+                    Debug.log "url" url
+
+                _ =
+                    Debug.log "parseRoute url" (parseRoute url)
+            in
             ( { model | url = url, route = parseRoute url }, Cmd.none )
 
         ParseFloors ->
-            ( { model | floor = day1Part1Floor }, Cmd.none )
+            ( { model | warmups = { warmup | floor = day1Part1Floor } }, Cmd.none )
 
         ParseBasementCharacterPosition ->
-            ( { model | basementCharacter = day1Part2BasementCharacter }, Cmd.none )
+            ( { model | warmups = { warmup | basementCharacter = day1Part2BasementCharacter } }, Cmd.none )
 
         ParsePresentPaperSizes ->
-            ( { model | squareFeetOfWrappingPaper = day2Part1WrappingPaper }, Cmd.none )
+            ( { model | warmups = { warmup | squareFeetOfWrappingPaper = day2Part1WrappingPaper } }, Cmd.none )
 
         ParseRibbonLength ->
-            ( { model | ribbonFeet = day2Part2RibbonLength }, Cmd.none )
+            ( { model | warmups = { warmup | ribbonFeet = day2Part2RibbonLength } }, Cmd.none )
 
 
 view : Model -> Browser.Document Msg
 view model =
+    let
+        _ =
+            Debug.log "model.route is" model.route
+    in
     { title = "Advent of Code 2023"
     , body =
-        [ div [ class "w-full bg-gray-800 border-gray-200" ]
-            [ tabs
+        [ div [ class "w-full bg-gray-900 border-gray-200 antialiased" ]
+            [ navbar
             , case model.route of
-                NotFound ->
-                    div [] [ text "Not found" ]
+                Warmup day ->
+                    case day of
+                        Just 2 ->
+                            div [ class "format" ]
+                                [ tabs2015 2
+                                , div [ class "m-6 block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700" ]
+                                    [ button
+                                        [ class "ext-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                                        , onClick ParseFloors
+                                        ]
+                                        [ text "Calculate Floor" ]
+                                    , div [ class "font-normal text-gray-700 dark:text-gray-400" ] [ text ("Floor: " ++ String.fromInt model.warmups.floor) ]
+                                    , button
+                                        [ class "ext-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                                        , onClick ParseBasementCharacterPosition
+                                        ]
+                                        [ text "Calculate Basement Character Position" ]
+                                    , div [ class "font-normal text-gray-700 dark:text-gray-400" ] [ text ("Basement Position: " ++ String.fromInt model.warmups.basementCharacter) ]
+                                    ]
+                                ]
 
-                Day12015Warmup ->
-                    div []
-                        [ text "Day 1 & 2 2015 Warmup"
-                        , button
-                            [ class "ext-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                            , onClick ParseFloors
-                            ]
-                            [ text "Calculate Floor" ]
-                        , div [] [ text ("Floor: " ++ String.fromInt model.floor) ]
-                        , button
-                            [ class "ext-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                            , onClick ParseBasementCharacterPosition
-                            ]
-                            [ text "Calculate Basement Character Position" ]
-                        , div [] [ text ("Basement Position: " ++ String.fromInt model.basementCharacter) ]
-                        , button
-                            [ class "ext-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                            , onClick ParsePresentPaperSizes
-                            ]
-                            [ text "Wrapping Paper" ]
-                        , div [] [ text ("Wrapping Paper Square Feet: " ++ String.fromInt model.squareFeetOfWrappingPaper) ]
-                        , button
-                            [ class "ext-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                            , onClick ParseRibbonLength
-                            ]
-                            [ text "Ribbon Length" ]
-                        , div [] [ text ("Ribbon Length: " ++ String.fromInt model.ribbonFeet) ]
-                        ]
+                        _ ->
+                            div []
+                                [ tabs2015 1
+                                , div [ class "m-6 block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700" ]
+                                    [ button
+                                        [ class "ext-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                                        , onClick ParsePresentPaperSizes
+                                        ]
+                                        [ text "Wrapping Paper" ]
+                                    , div [ class "font-normal text-gray-700 dark:text-gray-400" ] [ text ("Wrapping Paper Square Feet: " ++ String.fromInt model.warmups.squareFeetOfWrappingPaper) ]
+                                    , button
+                                        [ class "ext-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                                        , onClick ParseRibbonLength
+                                        ]
+                                        [ text "Ribbon Length" ]
+                                    , div [ class "font-normal text-gray-700 dark:text-gray-400" ] [ text ("Ribbon Length: " ++ String.fromInt model.warmups.ribbonFeet) ]
+                                    ]
+                                ]
 
-                Day1 ->
-                    div [] [ text "Day 1" ]
+                TwoThousandTwentyThree day ->
+                    case day of
+                        Just 2 ->
+                            div [] [ tabs2023 2, div [ class "m-6 block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700" ] [] ]
 
-                Day2 ->
-                    div [] [ text "Day 2" ]
+                        _ ->
+                            div [] [ tabs2023 1, div [ class "m-6 block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700" ] [] ]
             ]
         ]
     }
 
 
-tabs =
-    ul [ class "flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400" ]
-        [ li [ class "me-2" ]
-            [ a [ class "inline-block p-4 text-blue-600 bg-gray-100 rounded-t-lg active dark:bg-gray-800 dark:text-blue-500", href "/warmup" ] [ text "Day 1 2015 Warmup" ]
-            ]
-        , li [ class "me-2" ]
-            [ a [ class "inline-block p-4 text-blue-600 bg-gray-100 rounded-t-lg active dark:bg-gray-800 dark:text-blue-500", href "/day1" ] [ text "Day 1" ]
-            ]
-        , li [ class "me-2" ]
-            [ a [ class "inline-block p-4 rounded-t-lg hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300", href "/day2" ] [ text "Day 2" ]
+tabs2023 day =
+    case day of
+        2 ->
+            ul [ class "flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400" ]
+                [ li [ class "me-2" ]
+                    [ a [ href "/2023?day=1", class tabStyle ] [ text "Day 1" ]
+                    ]
+                , li [ class "me-2" ]
+                    [ a [ href "/2023?day=2", class selectedTabStyle ] [ text "Day 2" ]
+                    ]
+                ]
+
+        _ ->
+            ul [ class "flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400" ]
+                [ li [ class "me-2" ]
+                    [ a [ href "/2023?day=1", class selectedTabStyle ] [ text "Day 1" ]
+                    ]
+                , li [ class "me-2" ]
+                    [ a [ href "/2023?day=2", class tabStyle ] [ text "Day 2" ]
+                    ]
+                ]
+
+
+selectedTabStyle : String
+selectedTabStyle =
+    "inline-block p-4 text-blue-600 bg-gray-100 rounded-t-lg active dark:bg-gray-800 dark:text-blue-500"
+
+
+tabStyle : String
+tabStyle =
+    "inline-block p-4 rounded-t-lg hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300"
+
+
+tabs2015 warmupDay =
+    case warmupDay of
+        2 ->
+            ul [ class "flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400" ]
+                [ li [ class "me-2" ]
+                    [ a [ href "/2015?day=1", class tabStyle ] [ text "Warmup Day 1" ]
+                    ]
+                , li [ class "me-2" ]
+                    [ a [ href "/2015?day=2", class selectedTabStyle ] [ text "Warmup Day 2" ]
+                    ]
+                ]
+
+        _ ->
+            ul [ class "flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400" ]
+                [ li [ class "me-2" ]
+                    [ a [ href "/2015?day=1", class selectedTabStyle ] [ text "Warmup Day 1" ]
+                    ]
+                , li [ class "me-2" ]
+                    [ a [ href "/2015?day=2", class tabStyle ] [ text "Warmup Day 2" ]
+                    ]
+                ]
+
+
+navbar =
+    nav [ class "border-gray-200 bg-gray-900" ]
+        [ div [ class "max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4" ]
+            [ a [ class "flex items-center space-x-3 rtl:space-x-reverse", href "#" ]
+                [ img [ src "elm-hat.png", class "h-8" ] []
+                , span [ class "self-center text-2xl font-semibold whitespace-nowrap dark:text-white" ] [ text "Advent of Code 2023 in Elm" ]
+                ]
+            , div [ class "hidden w-full md:block md:w-auto" ]
+                [ ul [ class "font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700" ]
+                    [ li [] [ a [ href "/2023?day=1", class "block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500" ] [ text "2023 Challenges" ] ]
+                    , li [] [ a [ href "/2015?day=1", class "block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500" ] [ text "2015 Warmup" ] ]
+                    ]
+                ]
             ]
         ]
 
