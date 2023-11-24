@@ -1,6 +1,7 @@
 module Main exposing (main)
 
 import Browser
+import Browser.Dom exposing (Error(..))
 import Browser.Navigation as Nav
 import Html exposing (Html, a, b, button, div, img, li, nav, span, text, ul)
 import Html.Attributes exposing (class, href, src)
@@ -51,6 +52,7 @@ initialModel key url route =
 type Route
     = Warmup (Maybe Int)
     | TwoThousandTwentyThree (Maybe Int)
+    | NotFound
 
 
 routeParser : Url.Parser.Parser (Route -> a) a
@@ -128,7 +130,7 @@ view model =
     { title = "Advent of Code 2023"
     , body =
         [ div [ class "w-full bg-gray-900 border-gray-200 antialiased" ]
-            [ navbar
+            [ navbar model.route
             , case model.route of
                 Warmup day ->
                     case day of
@@ -177,6 +179,9 @@ view model =
 
                         _ ->
                             div [] [ tabs2023 1, div [ class "m-6 block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700" ] [] ]
+
+                NotFound ->
+                    div [] []
             ]
         ]
     }
@@ -238,7 +243,8 @@ tabs2015 warmupDay =
                 ]
 
 
-navbar =
+navbar : Route -> Html Msg
+navbar route =
     nav [ class "border-gray-200 bg-gray-900" ]
         [ div [ class "max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4" ]
             [ a [ class "flex items-center space-x-3 rtl:space-x-reverse", href "#" ]
@@ -247,12 +253,55 @@ navbar =
                 ]
             , div [ class "hidden w-full md:block md:w-auto" ]
                 [ ul [ class "font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700" ]
-                    [ li [] [ a [ href "/2023?day=1", class "block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500" ] [ text "2023 Challenges" ] ]
-                    , li [] [ a [ href "/2015?day=1", class "block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500" ] [ text "2015 Warmup" ] ]
+                    [ navbarLink route (TwoThousandTwentyThree Nothing) "/2023?day=1" "2023"
+                    , navbarLink route (Warmup Nothing) "/2015?day=1" "Warmups"
+                    , navbarLink route NotFound "https://elm-lang.org/" "What Is Elm?"
                     ]
                 ]
             ]
         ]
+
+
+navbarLink : Route -> Route -> String -> String -> Html Msg
+navbarLink route matchingRoute link textValue =
+    case route of
+        Warmup _ ->
+            case matchingRoute of
+                Warmup _ ->
+                    li [] [ a [ href link, class navbarLinkSelectedStyle ] [ text textValue ] ]
+
+                _ ->
+                    li [] [ a [ href link, class navbarLinkStyle ] [ text textValue ] ]
+
+        TwoThousandTwentyThree _ ->
+            case matchingRoute of
+                TwoThousandTwentyThree _ ->
+                    li [] [ a [ href link, class navbarLinkSelectedStyle ] [ text textValue ] ]
+
+                _ ->
+                    li [] [ a [ href link, class navbarLinkStyle ] [ text textValue ] ]
+
+        NotFound ->
+            li [] [ a [ href link, class navbarLinkStyle ] [ text textValue ] ]
+
+
+navbarLinkStyle : String
+navbarLinkStyle =
+    "block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
+
+
+navbarLinkSelectedStyle : String
+navbarLinkSelectedStyle =
+    "block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500"
+
+
+
+-- <li>
+--     <a href="#" class="block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500" aria-current="page">Home</a>
+-- </li>
+-- <li>
+--     <a href="#" class="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">About</a>
+-- </li>
 
 
 subscriptions : Model -> Sub Msg
