@@ -102,13 +102,6 @@ update msg model =
                     ( model, Nav.load href )
 
         UrlChanged url ->
-            let
-                _ =
-                    Debug.log "url" url
-
-                _ =
-                    Debug.log "parseRoute url" (parseRoute url)
-            in
             ( { model | url = url, route = parseRoute url }, Cmd.none )
 
         ParseFloors ->
@@ -126,10 +119,6 @@ update msg model =
 
 view : Model -> Browser.Document Msg
 view model =
-    let
-        _ =
-            Debug.log "model.route is" model.route
-    in
     { title = "Advent of Code 2023"
     , body =
         [ div [ class "w-full bg-gray-900 border-gray-200 antialiased" ]

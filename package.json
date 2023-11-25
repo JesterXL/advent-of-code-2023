@@ -9,8 +9,9 @@
     "watch:css": "tailwindcss -c tailwind.config.cjs -i ./src/tailwind.css -o src/tailwind.build.css --watch",
     "build": "npm run clean && npm run compile && npm run copy",
     "clean": "rm -rf docs",
-    "compile": "npm run compile:elm && npm run compile:css:prod",
-    "compile:elm": "elm make src/Main.elm --output=src/elm.js",
+    "compile": "npm run compile:elm && npm run uglify:elm && npm run compile:css:prod",
+    "compile:elm": "elm make src/Main.elm --optimize --output=src/elm.js",
+    "uglify:elm": "npx uglifyjs src/elm.js --compress 'pure_funcs=[F2,F3,F4,F5,F6,F7,F8,F9,A2,A3,A4,A5,A6,A7,A8,A9],pure_getters,keep_fargs=false,unsafe_comps,unsafe' | npx uglifyjs --mangle --output src/elm.js",
     "compile:css": "tailwindcss -c tailwind.config.cjs -i ./src/tailwind.css -o src/tailwind.build.css",
     "compile:css:prod": "NODE_ENV=production npm run compile:css",
     "copy": "mkdir docs && cp src/elm.js docs/elm.js && cp src/index.js docs/index.js && cp src/index.html docs/index.html && cp src/tailwind.build.css docs/tailwind.build.css && cp src/elm-hat.png docs/elm-hat.png"
@@ -22,7 +23,8 @@
     "elm": "^0.19.1-6",
     "elm-format": "^0.8.7",
     "elm-live": "^4.0.2",
-    "tailwindcss": "^3.3.5"
+    "tailwindcss": "^3.3.5",
+    "uglify-js": "^3.17.4"
   },
   "dependencies": {
     "flowbite": "^2.2.0"

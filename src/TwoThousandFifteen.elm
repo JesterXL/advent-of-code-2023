@@ -20,31 +20,46 @@ day1Part1Floor =
     -- "(()(()(" -- 3
     -- 232, 1st try, OH YEAH
     "(()(()("
+        -- convert string to a list
+        -- of characters
         |> String.split ""
+        -- loop through each character
         |> List.map
             (\char ->
+                -- if it's (, go up
                 if char == "(" then
                     1
 
                 else
+                    -- if it's ),
+                    -- go down
                     -1
             )
+        -- add up all the numbers
         |> List.sum
 
 
 day1Part1FloorCodeString : String
 day1Part1FloorCodeString =
     """"(()(()("
-    |> String.split ""
-    |> List.map
-        (\\char ->
-            if char == "(" then
-                1
+-- convert string to a list
+-- of characters
+|> String.split ""
+-- loop through each character
+|> List.map
+    (\\char ->
+        -- if it's (, go up
+        if char == "(" then
+            1
 
-            else
-                -1
-        )
-    |> List.sum"""
+        else
+            -- if it's ),
+            -- go down
+            -1
+    )
+-- add up all the numbers
+|> List.sum
+    """
 
 
 day1Part2BasementCharacter : Int
@@ -63,9 +78,15 @@ day1Part2BasementCharacter =
                 else
                     -1
             )
+        -- loop through the numbers
         |> List.foldl
             (\increment acc ->
+                -- if we haven't reached the basement yet, and
+                -- we've just arrived...
                 if acc.basementYet == False && acc.floor + increment == -1 then
+                    -- then say we've arrived,
+                    -- and update our floor
+                    -- and position.
                     { acc
                         | floor = acc.floor + increment
                         , position = acc.position + 1
@@ -73,50 +94,68 @@ day1Part2BasementCharacter =
                     }
 
                 else if acc.basementYet == False then
+                    -- otherwise just update our
+                    -- floor and position
                     { acc
                         | floor = acc.floor + increment
                         , position = acc.position + 1
                     }
+                    -- we've already captured the
+                    -- position, ignore all further
+                    -- loops
 
                 else
                     acc
             )
             { floor = 0, position = 0, basementYet = False }
+        -- pluck off the position
         |> .position
 
 
 day1Part2BasementCharacterCodeString : String
 day1Part2BasementCharacterCodeString =
     """"()())"
-    |> String.split ""
-    |> List.map
-        (\\char ->
-            if char == "(" then
-                1
+|> String.split ""
+|> List.map
+    (\\char ->
+        if char == "(" then
+            1
 
-            else
-                -1
-        )
-    |> List.foldl
-        (\\increment acc ->
-            if acc.basementYet == False && acc.floor + increment == -1 then
-                { acc
-                    | floor = acc.floor + increment
-                    , position = acc.position + 1
-                    , basementYet = True
-                }
+        else
+            -1
+    )
+-- loop through the numbers
+|> List.foldl
+    (\\increment acc ->
+        -- if we haven't reached the basement yet, and 
+        -- we've just arrived...
+        if acc.basementYet == False && acc.floor + increment == -1 then
+            -- then say we've arrived,
+            -- and update our floor
+            -- and position.
+            { acc
+                | floor = acc.floor + increment
+                , position = acc.position + 1
+                , basementYet = True
+            }
 
-            else if acc.basementYet == False then
-                { acc
-                    | floor = acc.floor + increment
-                    , position = acc.position + 1
-                }
-
-            else
-                acc
-        )
-        { floor = 0, position = 0, basementYet = False }
-    |> .position"""
+        else if acc.basementYet == False then
+            -- otherwise just update our
+            -- floor and position
+            { acc
+                | floor = acc.floor + increment
+                , position = acc.position + 1
+            }
+            -- we've already captured the
+            -- position, ignore all further
+            -- loops
+        else
+            acc
+    )
+    { floor = 0, position = 0, basementYet = False }
+-- pluck off the position
+|> .position
+    """
 
 
 largeInput2015Day1 : String
@@ -132,13 +171,20 @@ day2Part1WrappingPaper =
     -- 42
     -- 1440710 -- too low, whoops forgot smallest side slack, lelz
     day2LargeInput
+        -- convert the lines to a list of strings
         |> String.split "\n"
+        -- loop through the list of strings
         |> List.map
             (\dimensions ->
                 dimensions
+                    -- convert 2x3x4 to a list of
+                    -- ["2", "3", "4"]
                     |> String.split "x"
+                    -- loop through those numbers
                     |> List.map
                         (\char ->
+                            -- convert the string to
+                            -- a number
                             char
                                 |> String.toInt
                                 |> Maybe.withDefault 0
@@ -148,6 +194,8 @@ day2Part1WrappingPaper =
         |> List.map
             (\dimensions ->
                 let
+                    -- convert each number in the Array
+                    -- to th width, height, and length
                     width =
                         Array.get 0 dimensions
                             |> Maybe.withDefault 0
@@ -160,6 +208,10 @@ day2Part1WrappingPaper =
                         Array.get 2 dimensions
                             |> Maybe.withDefault 0
 
+                    -- do the first part of the
+                    -- surface area calcualtion,
+                    -- but save the values so we
+                    -- can sort them by smallest
                     first =
                         length * width
 
@@ -169,6 +221,10 @@ day2Part1WrappingPaper =
                     third =
                         height * length
 
+                    -- sort by the smallest
+                    -- so we can get the slack
+                    -- square feet of wrapping
+                    -- paper
                     slack =
                         [ first, second, third ]
                             |> List.sort
@@ -176,63 +232,86 @@ day2Part1WrappingPaper =
                             |> Array.get 0
                             |> Maybe.withDefault 0
                 in
+                -- calculate the surface area, then
+                -- add the slack
                 (first + second + third) * 2 + slack
             )
+        -- add up the total square feet
         |> List.sum
 
 
 day2Part1WrappingPaperCodeString : String
 day2Part1WrappingPaperCodeString =
     """
-    "2x3x4
-    1x1x10"
-        |> String.split ""
-        |> List.map
-            (\\dimensions ->
-                dimensions
-                    |> String.split "x"
-                    |> List.map
-                        (\\char ->
-                            char
-                                |> String.toInt
-                                |> Maybe.withDefault 0
-                        )
+"2x3x4
+1x1x10"
+-- convert the lines to a list of strings
+|> String.split "\\n"
+-- loop through the list of strings
+|> List.map
+    (\\dimensions ->
+        dimensions
+            -- convert 2x3x4 to a list of
+            -- ["2", "3", "4"]
+            |> String.split "x"
+            -- loop through those numbers
+            |> List.map
+                (\\char ->
+                    -- convert the string to
+                    -- a number
+                    char
+                        |> String.toInt
+                        |> Maybe.withDefault 0
+                )
+            |> Array.fromList
+    )
+|> List.map
+    (\\dimensions ->
+        let
+            -- convert each number in the Array
+            -- to th width, height, and length
+            width =
+                Array.get 0 dimensions
+                    |> Maybe.withDefault 0
+
+            height =
+                Array.get 1 dimensions
+                    |> Maybe.withDefault 0
+
+            length =
+                Array.get 2 dimensions
+                    |> Maybe.withDefault 0
+
+            -- do the first part of the
+            -- surface area calcualtion,
+            -- but save the values so we
+            -- can sort them by smallest
+            first =
+                length * width
+
+            second =
+                width * height
+
+            third =
+                height * length
+
+            -- sort by the smallest
+            -- so we can get the slack
+            -- square feet of wrapping
+            -- paper
+            slack =
+                [ first, second, third ]
+                    |> List.sort
                     |> Array.fromList
-            )
-        |> List.map
-            (\\dimensions ->
-                let
-                    width =
-                        Array.get 0 dimensions
-                            |> Maybe.withDefault 0
-
-                    height =
-                        Array.get 1 dimensions
-                            |> Maybe.withDefault 0
-
-                    length =
-                        Array.get 2 dimensions
-                            |> Maybe.withDefault 0
-
-                    first =
-                        length * width
-
-                    second =
-                        width * height
-
-                    third =
-                        height * length
-
-                    slack =
-                        [ first, second, third ]
-                            |> List.sort
-                            |> Array.fromList
-                            |> Array.get 0
-                            |> Maybe.withDefault 0
-                in
-                (first + second + third) * 2 + slack
-            )
-        |> List.sum
+                    |> Array.get 0
+                    |> Maybe.withDefault 0
+        in
+        -- calculate the surface area, then
+        -- add the slack
+        (first + second + third) * 2 + slack
+    )
+-- add up the total square feet
+|> List.sum
         """
 
 
@@ -269,12 +348,15 @@ day2Part2RibbonLength =
                         Array.get 2 dimensions
                             |> Maybe.withDefault 0
 
+                    -- get the 2 shortest perimeters
                     ( shortA, shortB ) =
+                        -- sort by smallest to largest
                         [ width, height, length ]
                             |> List.sort
                             |> Array.fromList
                             |> (\sides ->
                                     let
+                                        -- then get the first 2 values
                                         shortFirst =
                                             Array.get 0 sides
                                                 |> Maybe.withDefault 0
@@ -286,76 +368,91 @@ day2Part2RibbonLength =
                                     Tuple.pair shortFirst shortSecond
                                )
 
+                    -- add up the short sides to get the
+                    -- ribbon length
                     ribbon =
                         shortA + shortA + shortB + shortB
 
+                    -- and then get the cubic feat for
+                    -- the bow
                     bow =
                         width * height * length
                 in
+                -- total them both
                 ribbon + bow
             )
+        -- add up all the ribbon square feet
         |> List.sum
 
 
 day2Part2RibbonLengthCodeString : String
 day2Part2RibbonLengthCodeString =
     """
-    "2x3x4
-    1x1x10"
-    |> String.split ""
-    |> List.map
-        (\\dimensions ->
-            dimensions
-                |> String.split "x"
-                |> List.map
-                    (\\char ->
-                        char
-                            |> String.toInt
-                            |> Maybe.withDefault 0
-                    )
-                |> Array.fromList
-        )
-    |> List.map
-        (\\dimensions ->
-            let
-                width =
-                    Array.get 0 dimensions 
+"2x3x4
+1x1x10"
+|> String.split "\\n"
+|> List.map
+    (\\dimensions ->
+        dimensions
+            |> String.split "x"
+            |> List.map
+                (\\char ->
+                    char
+                        |> String.toInt
+                        |> Maybe.withDefault 0
+                )
+            |> Array.fromList
+    )
+|> List.map
+    (\\dimensions ->
+        let
+            width =
+                Array.get 0 dimensions
                     |> Maybe.withDefault 0
 
-                height =
-                    Array.get 1 dimensions 
+            height =
+                Array.get 1 dimensions
                     |> Maybe.withDefault 0
 
-                length =
-                    Array.get 2 dimensions 
+            length =
+                Array.get 2 dimensions
                     |> Maybe.withDefault 0
 
-                ( shortA, shortB ) =
-                    [ width, height, length ]
-                        |> List.sort
-                        |> Array.fromList
-                        |> (\\sides ->
-                                let
-                                    shortFirst =
-                                        Array.get 0 sides 
+            -- get the 2 shortest perimeters
+            ( shortA, shortB ) =
+                -- sort by smallest to largest
+                [ width, height, length ]
+                    |> List.sort
+                    |> Array.fromList
+                    |> (\\sides ->
+                            let
+                                -- then get the first 2 values
+                                shortFirst =
+                                    Array.get 0 sides
                                         |> Maybe.withDefault 0
 
-                                    shortSecond =
-                                        Array.get 1 sides 
+                                shortSecond =
+                                    Array.get 1 sides
                                         |> Maybe.withDefault 0
-                                in
-                                Tuple.pair shortFirst shortSecond
-                            )
+                            in
+                            Tuple.pair shortFirst shortSecond
+                        )
 
-                ribbon =
-                    shortA + shortA + shortB + shortB
+            -- add up the short sides to get the
+            -- ribbon length
+            ribbon =
+                shortA + shortA + shortB + shortB
 
-                bow =
-                    width * height * length
-            in
-            ribbon + bow
-        )
-    |> List.sum
+            -- and then get the cubic feat for
+            -- the bow
+            bow =
+                width * height * length
+        in
+        -- total them both
+        ribbon + bow
+    )
+-- add up all the ribbon square feet
+|> List.sum
     """
 
 
