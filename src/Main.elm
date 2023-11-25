@@ -224,20 +224,20 @@ tabs2023 day =
         2 ->
             ul [ class "flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400" ]
                 [ li [ class "me-2" ]
-                    [ a [ href "/2023?day=1", class tabStyle ] [ text "Day 1" ]
+                    [ a [ href "/advent-of-code-2023/2023?day=1", class tabStyle ] [ text "Day 1" ]
                     ]
                 , li [ class "me-2" ]
-                    [ a [ href "/2023?day=2", class selectedTabStyle ] [ text "Day 2" ]
+                    [ a [ href "/advent-of-code-2023/2023?day=2", class selectedTabStyle ] [ text "Day 2" ]
                     ]
                 ]
 
         _ ->
             ul [ class "flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400" ]
                 [ li [ class "me-2" ]
-                    [ a [ href "/2023?day=1", class selectedTabStyle ] [ text "Day 1" ]
+                    [ a [ href "/advent-of-code-2023/2023?day=1", class selectedTabStyle ] [ text "Day 1" ]
                     ]
                 , li [ class "me-2" ]
-                    [ a [ href "/2023?day=2", class tabStyle ] [ text "Day 2" ]
+                    [ a [ href "/advent-of-code-2023/2023?day=2", class tabStyle ] [ text "Day 2" ]
                     ]
                 ]
 
@@ -257,20 +257,20 @@ tabs2015 warmupDay =
         2 ->
             ul [ class "flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400" ]
                 [ li [ class "me-2" ]
-                    [ a [ href "/2015?day=1", class tabStyle ] [ text "Warmup Day 1" ]
+                    [ a [ href "/advent-of-code-2023/2015?day=1", class tabStyle ] [ text "Warmup Day 1" ]
                     ]
                 , li [ class "me-2" ]
-                    [ a [ href "/2015?day=2", class selectedTabStyle ] [ text "Warmup Day 2" ]
+                    [ a [ href "/advent-of-code-2023/2015?day=2", class selectedTabStyle ] [ text "Warmup Day 2" ]
                     ]
                 ]
 
         _ ->
             ul [ class "flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400" ]
                 [ li [ class "me-2" ]
-                    [ a [ href "/2015?day=1", class selectedTabStyle ] [ text "Warmup Day 1" ]
+                    [ a [ href "/advent-of-code-2023/2015?day=1", class selectedTabStyle ] [ text "Warmup Day 1" ]
                     ]
                 , li [ class "me-2" ]
-                    [ a [ href "/2015?day=2", class tabStyle ] [ text "Warmup Day 2" ]
+                    [ a [ href "/advent-of-code-2023/2015?day=2", class tabStyle ] [ text "Warmup Day 2" ]
                     ]
                 ]
 
@@ -279,15 +279,15 @@ navbar : Route -> Html Msg
 navbar route =
     nav [ class "border-gray-200 bg-gray-900" ]
         [ div [ class "max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4" ]
-            [ a [ class "flex items-center space-x-3 rtl:space-x-reverse", href "#" ]
+            [ a [ class "flex items-center space-x-3 rtl:space-x-reverse", href "/advent-of-code-2023/" ]
                 [ img [ src "elm-hat.png", class "h-8" ] []
                 , span [ class "self-center text-2xl font-semibold whitespace-nowrap dark:text-white" ] [ text "Advent of Code 2023 in Elm" ]
                 ]
             , div [ class "hidden w-full md:block md:w-auto" ]
                 [ ul [ class "font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700" ]
-                    [ navbarLink route (TwoThousandTwentyThree Nothing) "/2023?day=1" "2023"
-                    , navbarLink route (Warmup Nothing) "/2015?day=1" "Warmups"
-                    , navbarLink route About "/about" "About"
+                    [ navbarLink route (TwoThousandTwentyThree Nothing) "/advent-of-code-2023/2023?day=1" "2023"
+                    , navbarLink route (Warmup Nothing) "/advent-of-code-2023/2015?day=1" "Warmups"
+                    , navbarLink route About "/advent-of-code-2023/about" "About"
                     , navbarLink route NotFound "https://elm-lang.org/" "What Is Elm?"
                     ]
                 ]
