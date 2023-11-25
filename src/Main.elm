@@ -62,9 +62,9 @@ type Route
 routeParser : Url.Parser.Parser (Route -> a) a
 routeParser =
     oneOf
-        [ map Warmup (s "2015" <?> Query.int "day")
-        , map TwoThousandTwentyThree (s "2023" <?> Query.int "day")
-        , map About (s "about")
+        [ map Warmup (s "advent-of-code-2023" </> s "2015" <?> Query.int "day")
+        , map TwoThousandTwentyThree (s "advent-of-code-2023" </> s "2023" <?> Query.int "day")
+        , map About (s "advent-of-code-2023" </> s "about")
         ]
 
 
@@ -205,7 +205,7 @@ view model =
                             ]
                         , div [ class "flex flex-col gap-6 w-[520px] block p-6 border rounded-lg shadow bg-gray-800 border-gray-700" ]
                             [ h5 [ class "mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white" ] [ text "Why Elm?" ]
-                            , p [ class "font-normal text-gray-400" ] [ img [ src "elm-hat.png", width 120, class "float-left m-2" ] [], text "I choose to use ", a [ class "font-medium text-blue-500 hover:underline", href "https://elm-lang.org/" ] [ text "Elm" ], text " this year because I wanted a relaxing end of year. Elm is what I enjoy writing in so even if a challenge is hard, I'm still having fun. I was hoping to attempt some more visualizations this year like I did in 2018. You do NOT need to visualize your solutions, but I find it fun to build UI's." ]
+                            , p [ class "font-normal text-gray-400" ] [ img [ src "/elm-hat.png", width 120, class "float-left m-2" ] [], text "I choose to use ", a [ class "font-medium text-blue-500 hover:underline", href "https://elm-lang.org/" ] [ text "Elm" ], text " this year because I wanted a relaxing end of year. Elm is what I enjoy writing in so even if a challenge is hard, I'm still having fun. I was hoping to attempt some more visualizations this year like I did in 2018. You do NOT need to visualize your solutions, but I find it fun to build UI's." ]
                             , p [ class "font-normal text-gray-400" ] [ text "I thought about using Excel after seeing some inspiring AoC art others had done in it on Reddit and also because it now supports Lambda functions. I debated using either ", a [ class "font-medium text-blue-500 hover:underline", href "https://www.purescript.org/" ] [ text "PureScript" ], text " + ", a [ class "font-medium text-blue-500 hover:underline", href "https://purescript-halogen.github.io/purescript-halogen/" ] [ text "Halogen" ], text " or ", a [ class "font-medium text-blue-500 hover:underline", href "https://fable.io/" ] [ text "Fable" ], text " + ", a [ class "font-medium text-blue-500 hover:underline", href "https://fsharp.org/" ] [ text "F#" ], text " this year. Maybe next year I'll try something new." ]
                             , p [ class "font-normal text-gray-400" ] [ text "To learn more, I have a talk about Happiness in Elm." ]
                             , iframe [ width 460, height 258, src "https://www.youtube.com/embed/VJCP4_zgbPQ?si=0s-zuDiBN-h1PSOm", title "YouTube video player", attribute "allow" "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share", attribute "allowfullscreen" "" ] []
