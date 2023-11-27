@@ -9,7 +9,7 @@ import Html exposing (Html, a, b, button, code, div, h5, iframe, img, li, nav, p
 import Html.Attributes exposing (attribute, class, height, href, src, title, width)
 import Html.Events exposing (onClick)
 import SyntaxHighlight exposing (elm, monokai, toBlockHtml, useTheme)
-import TwoThousandFifteen exposing (day1Part1Floor, day1Part1FloorCodeString, day1Part2BasementCharacter, day1Part2BasementCharacterCodeString, day2Part1WrappingPaper, day2Part1WrappingPaperCodeString, day2Part2RibbonLength, day2Part2RibbonLengthCodeString)
+import TwoThousandFifteen exposing (day1Part1Floor, day1Part1FloorCodeString, day1Part2BasementCharacter, day1Part2BasementCharacterCodeString, day2Part1WrappingPaper, day2Part1WrappingPaperCodeString, day2Part2RibbonLength, day2Part2RibbonLengthCodeString, day3Part1HousePresents, day3Part2HousePresentsRobot)
 import Url
 import Url.Parser exposing ((</>), (<?>), map, oneOf, parse, s, string, top)
 import Url.Parser.Query as Query
@@ -35,6 +35,8 @@ type alias Warmups =
     , basementCharacter : Int
     , squareFeetOfWrappingPaper : Int
     , ribbonFeet : Int
+    , housePresents : Int
+    , housePresentsRobot : Int
     }
 
 
@@ -48,6 +50,8 @@ initialModel key url route =
         , basementCharacter = 0
         , squareFeetOfWrappingPaper = 0
         , ribbonFeet = 0
+        , housePresents = 0
+        , housePresentsRobot = 0
         }
     }
 
@@ -81,6 +85,8 @@ type Msg
     | ParseBasementCharacterPosition
     | ParsePresentPaperSizes
     | ParseRibbonLength
+    | ParseHousePresents
+    | ParseHousePresentsRobot
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -104,6 +110,10 @@ update msg model =
                     ( model, Nav.load href )
 
         UrlChanged url ->
+            let
+                _ =
+                    Debug.log "parse routeParser url" (parse routeParser url)
+            in
             ( { model | url = url, route = parseRoute url }, Cmd.none )
 
         ParseFloors ->
@@ -117,6 +127,12 @@ update msg model =
 
         ParseRibbonLength ->
             ( { model | warmups = { warmup | ribbonFeet = day2Part2RibbonLength } }, Cmd.none )
+
+        ParseHousePresents ->
+            ( { model | warmups = { warmup | housePresents = day3Part1HousePresents } }, Cmd.none )
+
+        ParseHousePresentsRobot ->
+            ( { model | warmups = { warmup | housePresentsRobot = day3Part2HousePresentsRobot } }, Cmd.none )
 
 
 view : Model -> Browser.Document Msg
@@ -178,6 +194,33 @@ view model =
                                             ]
                                             [ text "Calculate Basement Character Position" ]
                                         , elmCode day2Part2RibbonLengthCodeString
+                                        ]
+                                    ]
+                                ]
+
+                        Just 3 ->
+                            div []
+                                [ tabs2015 3
+                                , div [ class "flex flex-row gap-6 p-6" ]
+                                    [ div [ class "flex flex-col gap-6 w-[460px] block p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700" ]
+                                        [ h5 [ class "mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white" ] [ text "Santa Present Delivery" ]
+                                        , div [ class "font-normal text-gray-700 dark:text-gray-400" ] [ text ("House Presents: " ++ formatInt model.warmups.housePresents) ]
+                                        , button
+                                            [ class "ext-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                                            , onClick ParseHousePresents
+                                            ]
+                                            [ text "Calculate Presents in Houses" ]
+                                        , elmCode "day3HousePresentsCodeString"
+                                        ]
+                                    , div [ class "flex flex-col gap-6 w-[460px] block p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700" ]
+                                        [ h5 [ class "mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white" ] [ text "Santa + Robot" ]
+                                        , div [ class "font-normal text-gray-700 dark:text-gray-400" ] [ text ("House Presents: " ++ formatInt model.warmups.housePresentsRobot) ]
+                                        , button
+                                            [ class "ext-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                                            , onClick ParseHousePresentsRobot
+                                            ]
+                                            [ text "Calculate Robot Help" ]
+                                        , elmCode "day3HousePresentsCodeString"
                                         ]
                                     ]
                                 ]
@@ -262,6 +305,22 @@ tabs2015 warmupDay =
                 , li [ class "me-2" ]
                     [ a [ href "/advent-of-code-2023/2015?day=2", class selectedTabStyle ] [ text "Warmup Day 2" ]
                     ]
+                , li [ class "me-2" ]
+                    [ a [ href "/advent-of-code-2023/2015?day=3", class tabStyle ] [ text "Warmup Day 3" ]
+                    ]
+                ]
+
+        3 ->
+            ul [ class "flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400" ]
+                [ li [ class "me-2" ]
+                    [ a [ href "/advent-of-code-2023/2015?day=1", class tabStyle ] [ text "Warmup Day 1" ]
+                    ]
+                , li [ class "me-2" ]
+                    [ a [ href "/advent-of-code-2023/2015?day=2", class tabStyle ] [ text "Warmup Day 2" ]
+                    ]
+                , li [ class "me-2" ]
+                    [ a [ href "/advent-of-code-2023/2015?day=3", class selectedTabStyle ] [ text "Warmup Day 3" ]
+                    ]
                 ]
 
         _ ->
@@ -271,6 +330,9 @@ tabs2015 warmupDay =
                     ]
                 , li [ class "me-2" ]
                     [ a [ href "/advent-of-code-2023/2015?day=2", class tabStyle ] [ text "Warmup Day 2" ]
+                    ]
+                , li [ class "me-2" ]
+                    [ a [ href "/advent-of-code-2023/2015?day=3", class tabStyle ] [ text "Warmup Day 3" ]
                     ]
                 ]
 
