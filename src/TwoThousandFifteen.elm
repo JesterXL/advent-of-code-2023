@@ -1548,7 +1548,7 @@ day3Part1HousePresents =
 
 day3Part1HousePresentsCodeString : String
 day3Part1HousePresentsCodeString =
-    """day3LargeInput
+    """"^>v<"
 |> String.split ""
 |> List.filterMap
     (\\char ->
