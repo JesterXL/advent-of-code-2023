@@ -15,7 +15,7 @@
     "uglify:elm": "npx uglifyjs src/elm.js --compress 'pure_funcs=[F2,F3,F4,F5,F6,F7,F8,F9,A2,A3,A4,A5,A6,A7,A8,A9],pure_getters,keep_fargs=false,unsafe_comps,unsafe' | npx uglifyjs --mangle --output src/elm.js",
     "compile:css": "tailwindcss -c tailwind.config.cjs -i ./src/tailwind.css -o src/tailwind.build.css",
     "compile:css:prod": "NODE_ENV=production npm run compile:css",
-    "copy": "mkdir docs && cp src/elm.js docs/elm.js && cp src/index.js docs/index.js && cp src/index.html docs/index.html && cp src/tailwind.build.css docs/tailwind.build.css && cp src/elm-hat.png docs/elm-hat.png"
+    "copy": "sh copy.sh"
   },
   "keywords": [],
   "author": "",
