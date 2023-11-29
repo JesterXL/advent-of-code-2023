@@ -10,6 +10,7 @@ module TwoThousandFifteen exposing
     , day2Part2RibbonLength
     , day2Part2RibbonLengthCodeString
     , day3Part1HousePresents
+    , day3Part1HousePresentsCodeString
     , day3Part2HousePresentsRobot
     , getInitialPresentDelivery
     , updatePosition
@@ -1543,6 +1544,52 @@ day3Part1HousePresents =
         |> .houses
         |> Dict.toList
         |> List.length
+
+
+day3Part1HousePresentsCodeString : String
+day3Part1HousePresentsCodeString =
+    """day3LargeInput
+|> String.split ""
+|> List.filterMap
+    (\\char ->
+        case char of
+            ">" ->
+                Just East
+
+            "<" ->
+                Just West
+
+            "^" ->
+                Just North
+
+            "v" ->
+                Just South
+
+            _ ->
+                Nothing
+    )
+|> List.foldl
+    (\\direction { houses, position } ->
+        let
+            updatedPosition =
+                updatePosition direction position
+        in
+        { houses = addPresentToHouse houses updatedPosition
+        , position = updatedPosition }
+    )
+    (PresentDelivery 
+        (Dict.fromList 
+            [ 
+                ( getHouseKey 
+                    (getStartingHouse 1)
+                    , getStartingHouse 1 
+                ) ]) 
+            { x = 0, y = 0 }
+        )
+|> .houses
+|> Dict.toList
+|> List.length
+    """
 
 
 updatePosition : Direction -> Point -> Point

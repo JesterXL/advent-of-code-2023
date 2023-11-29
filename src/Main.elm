@@ -5,11 +5,11 @@ import Browser.Dom exposing (Error(..))
 import Browser.Navigation as Nav
 import FormatNumber exposing (format)
 import FormatNumber.Locales exposing (Decimals(..), usLocale)
-import Html exposing (Html, a, b, button, code, div, h5, iframe, img, li, nav, p, pre, span, text, ul)
+import Html exposing (Html, a, b, br, button, code, div, h5, iframe, img, li, nav, p, pre, span, text, ul)
 import Html.Attributes exposing (attribute, class, height, href, src, title, width)
 import Html.Events exposing (onClick)
 import SyntaxHighlight exposing (elm, monokai, toBlockHtml, useTheme)
-import TwoThousandFifteen exposing (day1Part1Floor, day1Part1FloorCodeString, day1Part2BasementCharacter, day1Part2BasementCharacterCodeString, day2Part1WrappingPaper, day2Part1WrappingPaperCodeString, day2Part2RibbonLength, day2Part2RibbonLengthCodeString, day3Part1HousePresents, day3Part2HousePresentsRobot)
+import TwoThousandFifteen exposing (day1Part1Floor, day1Part1FloorCodeString, day1Part2BasementCharacter, day1Part2BasementCharacterCodeString, day2Part1WrappingPaper, day2Part1WrappingPaperCodeString, day2Part2RibbonLength, day2Part2RibbonLengthCodeString, day3Part1HousePresents, day3Part1HousePresentsCodeString, day3Part2HousePresentsRobot)
 import Url
 import Url.Parser exposing ((</>), (<?>), map, oneOf, parse, s, string, top)
 import Url.Parser.Query as Query
@@ -110,10 +110,6 @@ update msg model =
                     ( model, Nav.load href )
 
         UrlChanged url ->
-            let
-                _ =
-                    Debug.log "parse routeParser url" (parse routeParser url)
-            in
             ( { model | url = url, route = parseRoute url }, Cmd.none )
 
         ParseFloors ->
@@ -202,7 +198,7 @@ view model =
                             div []
                                 [ tabs2015 3
                                 , div [ class "flex flex-row gap-6 p-6" ]
-                                    [ div [ class "flex flex-col gap-6 w-[460px] block p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700" ]
+                                    [ div [ class "flex flex-col gap-6 w-[510px] block p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700" ]
                                         [ h5 [ class "mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white" ] [ text "Santa Present Delivery" ]
                                         , div [ class "font-normal text-gray-700 dark:text-gray-400" ] [ text ("House Presents: " ++ formatInt model.warmups.housePresents) ]
                                         , button
@@ -210,7 +206,7 @@ view model =
                                             , onClick ParseHousePresents
                                             ]
                                             [ text "Calculate Presents in Houses" ]
-                                        , elmCode "day3HousePresentsCodeString"
+                                        , elmCode day3Part1HousePresentsCodeString
                                         ]
                                     , div [ class "flex flex-col gap-6 w-[460px] block p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700" ]
                                         [ h5 [ class "mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white" ] [ text "Santa + Robot" ]
@@ -220,7 +216,7 @@ view model =
                                             , onClick ParseHousePresentsRobot
                                             ]
                                             [ text "Calculate Robot Help" ]
-                                        , elmCode "day3HousePresentsCodeString"
+                                        , elmCode "???"
                                         ]
                                     ]
                                 ]
@@ -238,7 +234,7 @@ view model =
 
                 About ->
                     div [ class "flex flex-row gap-6 p-6 justify-center" ]
-                        [ div [ class "flex flex-col gap-6 w-[520px] block p-6 border rounded-lg shadow bg-gray-800 border-gray-700" ]
+                        [ div [ class "flex flex-col gap-6 w-[420px] min-w-[420px] block p-6 border rounded-lg shadow bg-gray-800 border-gray-700" ]
                             [ h5 [ class "mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white" ] [ text "What is Advent of Code?" ]
                             , p [ class "font-normal text-gray-400" ] [ a [ class "font-medium text-blue-500 hover:underline", href "https://adventofcode.com/" ] [ text "Advent of Code" ], text " is a yearly code challenge that starts Dec 1st and ends Dec 25th. The code challenges are Christmas oriented, and usually follow some dual theme; like helping \"Santa's elves save Christmas\" while at the same time you're \"building the Apollo space flight navigation computer.\"" ]
                             , p [ class "font-normal text-gray-400" ] [ text "Each day has a 2 part challenge, and each day gets progressively harder. After you complete the part 1 challenge successfully, they'll give you part 2. This makes it like the real-world where you learn new things from a client, and you may have to go back and re-think how you built part 1." ]
@@ -246,12 +242,51 @@ view model =
                             , p [ class "font-normal text-gray-400" ] [ text "You can use whatever programming language you like, or even tech. I've used JavaScript, Lua for Roblox, Elm, and Roc." ]
                             , p [ class "font-normal text-gray-400" ] [ text "You can try past years by clicking on \"Events\". Also, here's all the little UI's + source code I built in 2018 in Elm: ", a [ class "font-medium text-blue-500 hover:underline", href "https://jessewarden.com/2019/01/advent-of-code-2018-in-elm-review.html" ] [ text "https://jessewarden.com/2019/01/advent-of-code-2018-in-elm-review.html" ] ]
                             ]
-                        , div [ class "flex flex-col gap-6 w-[520px] block p-6 border rounded-lg shadow bg-gray-800 border-gray-700" ]
+                        , div [ class "flex flex-col gap-6 w-[520px] min-w-[520px] block p-6 border rounded-lg shadow bg-gray-800 border-gray-700" ]
                             [ h5 [ class "mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white" ] [ text "Why Elm?" ]
                             , p [ class "font-normal text-gray-400" ] [ img [ src "elm-hat.png", width 120, class "float-left m-2" ] [], text "I choose to use ", a [ class "font-medium text-blue-500 hover:underline", href "https://elm-lang.org/" ] [ text "Elm" ], text " this year because I wanted a relaxing end of year. Elm is what I enjoy writing in so even if a challenge is hard, I'm still having fun. I was hoping to attempt some more visualizations this year like I did in 2018. You do NOT need to visualize your solutions, but I find it fun to build UI's." ]
                             , p [ class "font-normal text-gray-400" ] [ text "I thought about using Excel after seeing some inspiring AoC art others had done in it on Reddit and also because it now supports Lambda functions. I debated using either ", a [ class "font-medium text-blue-500 hover:underline", href "https://www.purescript.org/" ] [ text "PureScript" ], text " + ", a [ class "font-medium text-blue-500 hover:underline", href "https://purescript-halogen.github.io/purescript-halogen/" ] [ text "Halogen" ], text " or ", a [ class "font-medium text-blue-500 hover:underline", href "https://fable.io/" ] [ text "Fable" ], text " + ", a [ class "font-medium text-blue-500 hover:underline", href "https://fsharp.org/" ] [ text "F#" ], text " this year. Maybe next year I'll try something new." ]
                             , p [ class "font-normal text-gray-400" ] [ text "To learn more, I have a talk about Happiness in Elm." ]
                             , iframe [ width 460, height 258, src "https://www.youtube.com/embed/VJCP4_zgbPQ?si=0s-zuDiBN-h1PSOm", title "YouTube video player", attribute "allow" "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share", attribute "allowfullscreen" "" ] []
+                            ]
+                        , div [ class "w-[250px] min-w-[250px] block p-6 self-baseline border rounded-lg shadow bg-gray-800 border-gray-700" ]
+                            [ h5 [ class "mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white" ] [ text "Who" ]
+                            , img [ src "jxl-helmet.jpg", class "float-left m-1" ] []
+                            , p [ class "font-normal text-gray-400" ] [ text "I'm Jesse Warden, a software developer. I love building UI's and API's in AWS Serverless." ]
+                            , span []
+                                [ img [ class "inline mr-1", src "jxl-logo.png", width 16 ] []
+                                , a [ class "font-medium text-blue-500 hover:underline", href "https://www.jessewarden.com/" ] [ text "Blog" ]
+                                ]
+                            , br [] []
+                            , span []
+                                [ img [ class "inline mr-1", src "youtube-logo.png", width 16 ] []
+                                , a [ class "font-medium text-blue-500 hover:underline", href "https://www.youtube.com/@JesseWarden" ] [ text "YouTube Programming" ]
+                                ]
+                            , br [] []
+                            , span []
+                                [ img [ class "inline mr-1", src "youtube-logo.png", width 16 ] []
+                                , a [ class "font-medium text-blue-500 hover:underline", href "https://www.youtube.com/@JesseWardenAdventures" ] [ text "YouTube Outdoors" ]
+                                ]
+                            , br [] []
+                            , span []
+                                [ img [ class "inline mr-1", src "linkedin-logo.png", width 16 ] []
+                                , a [ class "font-medium text-blue-500 hover:underline", href "https://www.linkedin.com/in/jessewarden/" ] [ text "LinkedIn" ]
+                                ]
+                            , br [] []
+                            , span []
+                                [ img [ class "inline mr-1", src "x-logo.png", width 16 ] []
+                                , a [ class "font-medium text-blue-500 hover:underline", href "https://twitter.com/jesterxl" ] [ text "X (aka Twitter)" ]
+                                ]
+                            , br [] []
+                            , span []
+                                [ img [ class "inline mr-1", src "github-logo.png", width 16 ] []
+                                , a [ class "font-medium text-blue-500 hover:underline", href "https://github.com/JesterXL" ] [ text "GitHub" ]
+                                ]
+                            , br [] []
+                            , span []
+                                [ span [ class "mr-1" ] [ text "📧" ]
+                                , a [ class "font-medium text-blue-500 hover:underline", href "mailto:jesse.warden@gmail.com" ] [ text "Email" ]
+                                ]
                             ]
                         ]
 
