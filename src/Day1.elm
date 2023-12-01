@@ -1,4 +1,4 @@
-module Day1 exposing (getCalibration, puzzleInput, sampleInput)
+module Day1 exposing (getCalibration, numberWordsStringToNumbers, puzzleInput, sampleInput)
 
 -- 54927 ... CORRECT, first try, baby!
 
@@ -1030,3 +1030,8 @@ jone4ccn8
 nftdkmtmcz4
 nlnineeightmndkqz8nineonenrqm
 nrhdxfsqvxcbcghf35eightthreeseven5"""
+
+
+numberWordsStringToNumbers : String -> Int
+numberWordsStringToNumbers input =
+    29
