@@ -57,6 +57,15 @@ suite =
             , test "should work with sample from puzzleInput 3" <|
                 \_ ->
                     Expect.equal (numberWordsStringToNumbers "xqfcdfdsrlhdktdjshllqgqshzmf7hpcdgdfcvntczdxxfqbvz") 77
+            , test "should work with sample from puzzleInput 4" <|
+                \_ ->
+                    Expect.equal (numberWordsStringToNumbers "79") 79
+            , test "should work with sample from puzzleInput 5" <|
+                \_ ->
+                    Expect.equal (numberWordsStringToNumbers "8xfkfkbp") 88
+            , test "should work with sample from puzzleInput 6" <|
+                \_ ->
+                    Expect.equal (numberWordsStringToNumbers "36fiveeightsixseventhreefour9") 39
             ]
         , describe "getCalibrationEnhanced"
             [ test "getCalibrationEnhanced should parse basic input" <|
