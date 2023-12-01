@@ -27,8 +27,20 @@ suite =
                     Expect.equal calibration 54927
             ]
         , describe "numberWordsStringToNumbers"
-            [ test "numberWordsStringToNumbers should parse basic input" <|
+            [ test "numberWordsStringToNumbers should parse basic input two1nine" <|
                 \_ ->
                     Expect.equal (numberWordsStringToNumbers "two1nine") 29
+            , test "numberWordsStringToNumbers should parse basic input eightwothree" <|
+                \_ ->
+                    Expect.equal (numberWordsStringToNumbers "eightwothree") 83
+            , test "numberWordsStringToNumbers should parse basic input abcone2threexyz" <|
+                \_ ->
+                    Expect.equal (numberWordsStringToNumbers "abcone2threexyz") 13
+            , test "numberWordsStringToNumbers should parse basic input xtwone3four" <|
+                \_ ->
+                    Expect.equal (numberWordsStringToNumbers "xtwone3four") 24
+            , test "numberWordsStringToNumbers should parse basic input xtwone3four" <|
+                \_ ->
+                    Expect.equal (numberWordsStringToNumbers "4nineeightseven2") 42
             ]
         ]
