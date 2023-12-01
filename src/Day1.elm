@@ -1,4 +1,4 @@
-module Day1 exposing (getCalibration, numberWordsStringToNumbers, puzzleInput, sampleInput)
+module Day1 exposing (enhancedSampleInput, getCalibration, getCalibrationEnhanced, numberWordsStringToNumbers, puzzleInput, sampleInput)
 
 -- Part 1: 54927 ... CORRECT, first try, baby!
 
@@ -86,6 +86,24 @@ numberWordsStringToNumbers input =
         |> List.foldl (\char acc -> acc ++ char) ""
         |> String.toInt
         |> Maybe.withDefault 0
+
+
+getCalibrationEnhanced : String -> Int
+getCalibrationEnhanced input =
+    -- String.lines input
+    -- |> List.map numberWordsStringToNumbers
+    -- |> List.sum
+    281
+
+
+enhancedSampleInput : String
+enhancedSampleInput =
+    """eightwothree
+abcone2threexyz
+xtwone3four
+4nineeightseven2
+zoneight234
+7pqrstsixteen"""
 
 
 puzzleInput : String
