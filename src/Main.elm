@@ -214,7 +214,6 @@ view model =
                 TwoThousandTwentyThreeDay1 ->
                     div []
                         [ tabs2023 model.page
-                        , div [ class "m-6 block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700" ] []
                         , div [ class "flex flex-row gap-6 p-6" ]
                             [ div [ class "flex flex-col gap-6 block p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700" ]
                                 [ h5 [ class "mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white" ] [ text "Trebuchet Configs" ]
