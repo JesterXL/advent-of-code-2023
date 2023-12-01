@@ -3,6 +3,7 @@ module Main exposing (main)
 import Browser
 import Browser.Dom exposing (Error(..))
 import Browser.Navigation as Nav
+import Day1 exposing (day1Part1, day1Part1CodeString, day1Part2, day1Part2CodeString)
 import FormatNumber exposing (format)
 import FormatNumber.Locales exposing (Decimals(..), usLocale)
 import Html exposing (Html, a, b, br, button, code, div, h5, iframe, img, li, nav, p, pre, span, text, ul)
@@ -25,6 +26,7 @@ init _ =
 type alias Model =
     { page : Page
     , warmups : Warmups
+    , day1 : Day1Model
     }
 
 
@@ -47,6 +49,12 @@ type alias Warmups =
     }
 
 
+type alias Day1Model =
+    { trebuchetConfig : Int
+    , trebuchetConfigEnhanced : Int
+    }
+
+
 initialModel : Model
 initialModel =
     { page = TwoThousandTwentyThreeDay1
@@ -57,6 +65,10 @@ initialModel =
         , ribbonFeet = 0
         , housePresents = 0
         , housePresentsRobot = 0
+        }
+    , day1 =
+        { trebuchetConfig = 0
+        , trebuchetConfigEnhanced = 0
         }
     }
 
@@ -69,6 +81,8 @@ type Msg
     | ParseRibbonLength
     | ParseHousePresents
     | ParseHousePresentsRobot
+    | Day1Part1
+    | Day1Part2
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -76,6 +90,9 @@ update msg model =
     let
         warmup =
             model.warmups
+
+        day1 =
+            model.day1
     in
     case msg of
         GoToPage page ->
@@ -98,6 +115,12 @@ update msg model =
 
         ParseHousePresentsRobot ->
             ( { model | warmups = { warmup | housePresentsRobot = day3Part2HousePresentsRobot } }, Cmd.none )
+
+        Day1Part1 ->
+            ( { model | day1 = { day1 | trebuchetConfig = day1Part1 } }, Cmd.none )
+
+        Day1Part2 ->
+            ( { model | day1 = { day1 | trebuchetConfigEnhanced = day1Part2 } }, Cmd.none )
 
 
 view : Model -> Browser.Document Msg
@@ -189,7 +212,32 @@ view model =
                         ]
 
                 TwoThousandTwentyThreeDay1 ->
-                    div [] [ tabs2023 model.page, div [ class "m-6 block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700" ] [] ]
+                    div []
+                        [ tabs2023 model.page
+                        , div [ class "m-6 block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700" ] []
+                        , div [ class "flex flex-row gap-6 p-6" ]
+                            [ div [ class "flex flex-col gap-6 block p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700" ]
+                                [ h5 [ class "mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white" ] [ text "Trebuchet Configs" ]
+                                , div [ class "font-normal text-gray-700 dark:text-gray-400" ] [ text ("Trebuchet Value: " ++ formatInt model.day1.trebuchetConfig) ]
+                                , button
+                                    [ class "ext-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                                    , onClick Day1Part1
+                                    ]
+                                    [ text "Calculate Trebuchet Config" ]
+                                , elmCode day1Part1CodeString
+                                ]
+                            , div [ class "flex flex-col gap-6 block p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700" ]
+                                [ h5 [ class "mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white" ] [ text "Ribbon Length" ]
+                                , div [ class "font-normal text-gray-700 dark:text-gray-400" ] [ text ("Trebuchet Enhanced: " ++ formatInt model.day1.trebuchetConfigEnhanced) ]
+                                , button
+                                    [ class "ext-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                                    , onClick Day1Part2
+                                    ]
+                                    [ text "Ribbon Length" ]
+                                , elmCode day1Part2CodeString
+                                ]
+                            ]
+                        ]
 
                 TwoThousandTwentyThreeDay2 ->
                     div [] [ tabs2023 model.page, div [ class "m-6 block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700" ] [] ]

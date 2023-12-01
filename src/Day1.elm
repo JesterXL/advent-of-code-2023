@@ -1,4 +1,4 @@
-module Day1 exposing (enhancedSampleInput, getCalibration, getCalibrationEnhanced, numberWordsStringToNumbers, puzzleInput, sampleInput)
+module Day1 exposing (day1Part1, day1Part1CodeString, day1Part2, day1Part2CodeString, enhancedSampleInput, getCalibration, getCalibrationEnhanced, numberWordsStringToNumbers, puzzleInput, sampleInput)
 
 -- Part 1: 54927 ... CORRECT, first try, baby!
 -- Part 2: 54663 was wrong, says too high.
@@ -9,19 +9,49 @@ module Day1 exposing (enhancedSampleInput, getCalibration, getCalibrationEnhance
 
 getCalibration : String -> Int
 getCalibration stringInput =
+    -- parse string to lines of text
     String.lines stringInput
+        -- only keep characters that are digits
         |> List.map (\string -> String.filter Char.isDigit string)
+        -- if only 1 number, duplicate it
         |> List.map
             (\str ->
                 if String.length str == 1 then
                     String.append str str
+                    -- otherwise keep as is
 
                 else
                     str
             )
+        -- add 2 strings together to be a 2 digit number as a string
         |> List.map (\str -> String.left 1 str ++ String.right 1 str)
+        -- convert them to numbers
         |> List.filterMap String.toInt
+        -- add 'em up
         |> List.sum
+
+
+day1Part1CodeString : String
+day1Part1CodeString =
+    """-- parse string to lines of text
+String.lines stringInput
+-- only keep characters that are digits
+|> List.map (\\string -> String.filter Char.isDigit string)
+-- if only 1 number, duplicate it
+|> List.map
+    (\\str ->
+        if String.length str == 1 then
+            String.append str str
+        -- otherwise keep as is
+        else
+            str
+    )
+-- add 2 strings together to be a 2 digit number as a string
+|> List.map (\\str -> String.left 1 str ++ String.right 1 str)
+-- convert them to numbers
+|> List.filterMap String.toInt
+-- add 'em up
+|> List.sum"""
 
 
 sampleInput : String
@@ -32,8 +62,14 @@ a1b2c3d4e5f
 treb7uchet"""
 
 
+day1Part1 : Int
+day1Part1 =
+    getCalibration puzzleInput
+
+
 numberWordsStringToNumbers : String -> Int
 numberWordsStringToNumbers input =
+    -- find all indexes for a digit and/or number name
     [ ( "1", String.indexes "one" input )
     , ( "2", String.indexes "two" input )
     , ( "3", String.indexes "three" input )
@@ -53,6 +89,7 @@ numberWordsStringToNumbers input =
     , ( "8", String.indexes "8" input )
     , ( "9", String.indexes "9" input )
     ]
+        -- only keep the ones that actually found something
         |> List.filterMap
             (\( value, indexes ) ->
                 if List.length indexes > 0 then
@@ -61,22 +98,27 @@ numberWordsStringToNumbers input =
                 else
                     Nothing
             )
+        -- find the first and last number or digit
         |> (\tupleNumbers ->
                 let
+                    -- sort by first found index
                     sortedByFirst =
                         sortTuplesByFirstIndex tupleNumbers
 
+                    -- sort by last found index
                     sortedByLast =
                         sortTuplesByLastIndex tupleNumbers
                 in
+                -- add first and last digit/number name found
                 List.take 1 sortedByFirst ++ List.take 1 sortedByLast
            )
-        |> List.map
-            (\( value, _ ) ->
-                value
-            )
+        -- take value out of tuple
+        |> List.map Tuple.first
+        -- add the characters together
         |> List.foldl (\char acc -> acc ++ char) ""
+        -- convert to an integer
         |> String.toInt
+        -- assume my parsing is flawless
         |> Maybe.withDefault 0
 
 
@@ -137,6 +179,66 @@ getCalibrationEnhanced input =
     String.lines input
         |> List.map numberWordsStringToNumbers
         |> List.sum
+
+
+day1Part2 : Int
+day1Part2 =
+    getCalibrationEnhanced puzzleInput
+
+
+day1Part2CodeString : String
+day1Part2CodeString =
+    """-- find all indexes for a digit and/or number name
+[ ( "1", String.indexes "one" input )
+, ( "2", String.indexes "two" input )
+, ( "3", String.indexes "three" input )
+, ( "4", String.indexes "four" input )
+, ( "5", String.indexes "five" input )
+, ( "6", String.indexes "six" input )
+, ( "7", String.indexes "seven" input )
+, ( "8", String.indexes "eight" input )
+, ( "9", String.indexes "nine" input )
+, ( "1", String.indexes "1" input )
+, ( "2", String.indexes "2" input )
+, ( "3", String.indexes "3" input )
+, ( "4", String.indexes "4" input )
+, ( "5", String.indexes "5" input )
+, ( "6", String.indexes "6" input )
+, ( "7", String.indexes "7" input )
+, ( "8", String.indexes "8" input )
+, ( "9", String.indexes "9" input )
+]
+-- only keep the ones that actually found something
+|> List.filterMap
+    (\\( value, indexes ) ->
+        if List.length indexes > 0 then
+            Just ( value, List.sort indexes )
+
+        else
+            Nothing
+    )
+-- find the first and last number or digit
+|> (\\tupleNumbers ->
+        let
+            -- sort by first found index
+            sortedByFirst =
+                sortTuplesByFirstIndex tupleNumbers
+
+            -- sort by last found index
+            sortedByLast =
+                sortTuplesByLastIndex tupleNumbers
+        in
+        -- add first and last digit/number name found
+        List.take 1 sortedByFirst ++ List.take 1 sortedByLast
+    )
+-- take value out of tuple
+|> List.map Tuple.first
+-- add the characters together
+|> List.foldl (\\char acc -> acc ++ char) ""
+-- convert to an integer
+|> String.toInt
+-- assume my parsing is flawless
+|> Maybe.withDefault 0"""
 
 
 enhancedSampleInput : String
