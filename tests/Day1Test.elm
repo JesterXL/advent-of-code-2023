@@ -1,6 +1,6 @@
 module Day1Test exposing (..)
 
-import Day1 exposing (getCalibration, numberWordsStringToNumbers, puzzleInput, sampleInput)
+import Day1 exposing (enhancedSampleInput, getCalibration, getCalibrationEnhanced, numberWordsStringToNumbers, puzzleInput, sampleInput)
 import Dict
 import Expect exposing (Expectation)
 import Fuzz exposing (Fuzzer, floatRange, int, list, string)
@@ -48,5 +48,14 @@ suite =
             , test "numberWordsStringToNumbers should parse basic input 7pqrstsixteen" <|
                 \_ ->
                     Expect.equal (numberWordsStringToNumbers "7pqrstsixteen") 76
+            ]
+        , describe "getCalibrationEnhanced"
+            [ test "getCalibrationEnhanced should parse basic input" <|
+                \_ ->
+                    Expect.equal (getCalibrationEnhanced enhancedSampleInput) 281
+
+            -- , test "getCalibrationEnhanced should parse puzzle input" <|
+            --     \_ ->
+            --         Expect.equal (getCalibrationEnhanced puzzleInput) 54663
             ]
         ]
