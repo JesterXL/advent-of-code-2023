@@ -53,9 +53,8 @@ suite =
             [ test "getCalibrationEnhanced should parse basic input" <|
                 \_ ->
                     Expect.equal (getCalibrationEnhanced enhancedSampleInput) 281
-
-            -- , test "getCalibrationEnhanced should parse puzzle input" <|
-            --     \_ ->
-            --         Expect.equal (getCalibrationEnhanced puzzleInput) 54663
+            , test "getCalibrationEnhanced should parse puzzle input" <|
+                \_ ->
+                    Expect.equal (getCalibrationEnhanced puzzleInput) 54663
             ]
         ]

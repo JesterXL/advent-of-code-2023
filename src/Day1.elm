@@ -90,16 +90,9 @@ numberWordsStringToNumbers input =
 
 getCalibrationEnhanced : String -> Int
 getCalibrationEnhanced input =
-    let
-        numbers =
-            String.lines input
-                |> List.map numberWordsStringToNumbers
-                |> List.sum
-
-        _ =
-            Debug.log "numbers are" numbers
-    in
-    281
+    String.lines input
+        |> List.map numberWordsStringToNumbers
+        |> List.sum
 
 
 enhancedSampleInput : String
