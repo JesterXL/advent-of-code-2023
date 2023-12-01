@@ -1,6 +1,7 @@
 module Day1 exposing (enhancedSampleInput, getCalibration, getCalibrationEnhanced, numberWordsStringToNumbers, puzzleInput, sampleInput)
 
 -- Part 1: 54927 ... CORRECT, first try, baby!
+-- Part 2: 54663 was wrong, says too high.
 
 
 getCalibration : String -> Int
@@ -52,7 +53,7 @@ numberWordsStringToNumbers input =
         |> List.filterMap
             (\( value, indexes ) ->
                 if List.length indexes > 0 then
-                    Just ( value, indexes )
+                    Just ( value, List.sort indexes )
 
                 else
                     Nothing
@@ -83,6 +84,13 @@ numberWordsStringToNumbers input =
             (\( value, _ ) ->
                 value
             )
+        -- |> (\value ->
+        --         let
+        --             _ =
+        --                 Debug.log "value" value
+        --         in
+        --         value
+        --    )
         |> List.foldl (\char acc -> acc ++ char) ""
         |> String.toInt
         |> Maybe.withDefault 0

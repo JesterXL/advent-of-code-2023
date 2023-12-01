@@ -73,10 +73,16 @@ suite =
                     Expect.equal (getCalibrationEnhanced enhancedSampleInput) 281
             , test "getCalibrationEnhanced should work with part 1 sample input" <|
                 \_ ->
-                    Expect.equal (getCalibrationEnhanced sampleInput) 142
+                    Expect.equal (getCalibrationEnhanced sampleInput)
+                        142
+            , test "getCalibrationEnhanced should work with multiple last indexes" <|
+                \_ ->
+                    Expect.equal (getCalibrationEnhanced "xkjldssevenseventwo2two2done112") 72
 
-            -- ,
-            --     test "getCalibrationEnhanced should parse puzzle input" <|
+            -- , only <|
+            --     test
+            --         "getCalibrationEnhanced should parse puzzle input"
+            --     <|
             --         \_ ->
             --             Expect.equal (getCalibrationEnhanced puzzleInput) 54663
             ]
