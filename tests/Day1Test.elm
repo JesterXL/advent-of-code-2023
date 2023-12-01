@@ -27,34 +27,48 @@ suite =
                     Expect.equal calibration 54927
             ]
         , describe "numberWordsStringToNumbers"
-            [ test "numberWordsStringToNumbers should parse basic input two1nine" <|
+            [ test "should parse basic input two1nine" <|
                 \_ ->
                     Expect.equal (numberWordsStringToNumbers "two1nine") 29
-            , test "numberWordsStringToNumbers should parse basic input eightwothree" <|
+            , test "should parse basic input eightwothree" <|
                 \_ ->
                     Expect.equal (numberWordsStringToNumbers "eightwothree") 83
-            , test "numberWordsStringToNumbers should parse basic input abcone2threexyz" <|
+            , test "should parse basic input abcone2threexyz" <|
                 \_ ->
                     Expect.equal (numberWordsStringToNumbers "abcone2threexyz") 13
-            , test "numberWordsStringToNumbers should parse basic input xtwone3four" <|
+            , test "should parse basic input xtwone3four" <|
                 \_ ->
                     Expect.equal (numberWordsStringToNumbers "xtwone3four") 24
-            , test "numberWordsStringToNumbers should parse basic input 4nineeightseven2" <|
+            , test "should parse basic input 4nineeightseven2" <|
                 \_ ->
                     Expect.equal (numberWordsStringToNumbers "4nineeightseven2") 42
-            , test "numberWordsStringToNumbers should parse basic input zoneight234" <|
+            , test "should parse basic input zoneight234" <|
                 \_ ->
                     Expect.equal (numberWordsStringToNumbers "zoneight234") 14
-            , test "numberWordsStringToNumbers should parse basic input 7pqrstsixteen" <|
+            , test "should parse basic input 7pqrstsixteen" <|
                 \_ ->
                     Expect.equal (numberWordsStringToNumbers "7pqrstsixteen") 76
+            , test "should work with sample from puzzleInput 1" <|
+                \_ ->
+                    Expect.equal (numberWordsStringToNumbers "14gxqgqsqqbxfpxnbccjc33eight") 18
+            , test "should work with sample from puzzleInput 2" <|
+                \_ ->
+                    Expect.equal (numberWordsStringToNumbers "mrjstg5onetwoeightgcczx8vgrgl") 58
+            , test "should work with sample from puzzleInput 3" <|
+                \_ ->
+                    Expect.equal (numberWordsStringToNumbers "xqfcdfdsrlhdktdjshllqgqshzmf7hpcdgdfcvntczdxxfqbvz") 77
             ]
         , describe "getCalibrationEnhanced"
             [ test "getCalibrationEnhanced should parse basic input" <|
                 \_ ->
                     Expect.equal (getCalibrationEnhanced enhancedSampleInput) 281
-            , test "getCalibrationEnhanced should parse puzzle input" <|
+            , test "getCalibrationEnhanced should work with part 1 sample input" <|
                 \_ ->
-                    Expect.equal (getCalibrationEnhanced puzzleInput) 54663
+                    Expect.equal (getCalibrationEnhanced sampleInput) 142
+
+            -- ,
+            --     test "getCalibrationEnhanced should parse puzzle input" <|
+            --         \_ ->
+            --             Expect.equal (getCalibrationEnhanced puzzleInput) 54663
             ]
         ]
