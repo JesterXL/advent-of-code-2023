@@ -58,25 +58,7 @@ numberWordsStringToNumbers input =
                 else
                     Nothing
             )
-        |> List.sortWith
-            (\( _, indexesA ) ( _, indexesB ) ->
-                let
-                    first =
-                        List.head indexesA |> Maybe.withDefault 0
-
-                    second =
-                        List.head indexesB |> Maybe.withDefault 0
-                in
-                case compare first second of
-                    LT ->
-                        LT
-
-                    EQ ->
-                        EQ
-
-                    GT ->
-                        GT
-            )
+        |> sortTuplesByFirstIndex
         |> (\tupleNumbers ->
                 List.take 1 tupleNumbers ++ (List.reverse tupleNumbers |> List.take 1)
            )
@@ -84,16 +66,33 @@ numberWordsStringToNumbers input =
             (\( value, _ ) ->
                 value
             )
-        -- |> (\value ->
-        --         let
-        --             _ =
-        --                 Debug.log "value" value
-        --         in
-        --         value
-        --    )
         |> List.foldl (\char acc -> acc ++ char) ""
         |> String.toInt
         |> Maybe.withDefault 0
+
+
+sortTuplesByFirstIndex : List ( String, List Int ) -> List ( String, List Int )
+sortTuplesByFirstIndex tupleNumbers =
+    List.sortWith
+        (\( _, indexesA ) ( _, indexesB ) ->
+            let
+                first =
+                    List.head indexesA |> Maybe.withDefault 0
+
+                second =
+                    List.head indexesB |> Maybe.withDefault 0
+            in
+            case compare first second of
+                LT ->
+                    LT
+
+                EQ ->
+                    EQ
+
+                GT ->
+                    GT
+        )
+        tupleNumbers
 
 
 getCalibrationEnhanced : String -> Int
