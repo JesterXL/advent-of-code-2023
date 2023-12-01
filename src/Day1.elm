@@ -90,15 +90,22 @@ numberWordsStringToNumbers input =
 
 getCalibrationEnhanced : String -> Int
 getCalibrationEnhanced input =
-    -- String.lines input
-    --     |> List.map numberWordsStringToNumbers
-    --     |> List.sum
+    let
+        numbers =
+            String.lines input
+                |> List.map numberWordsStringToNumbers
+                |> List.sum
+
+        _ =
+            Debug.log "numbers are" numbers
+    in
     281
 
 
 enhancedSampleInput : String
 enhancedSampleInput =
-    """eightwothree
+    """two1nine
+eightwothree
 abcone2threexyz
 xtwone3four
 4nineeightseven2
