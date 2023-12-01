@@ -2,6 +2,9 @@ module Day1 exposing (enhancedSampleInput, getCalibration, getCalibrationEnhance
 
 -- Part 1: 54927 ... CORRECT, first try, baby!
 -- Part 2: 54663 was wrong, says too high.
+-- Part 2: 54581... Correct! 2nd try, my bad,
+-- sorting I didn't think through, but now I get why. Took me awhile
+-- to figure out a test case to make it fail, but that helped immensely.
 
 
 getCalibration : String -> Int
@@ -65,9 +68,6 @@ numberWordsStringToNumbers input =
 
                     sortedByLast =
                         sortTuplesByLastIndex tupleNumbers
-
-                    -- first
-                    --     = List.take 1 tupleNumbers ++ (List.reverse tupleNumbers |> List.take 1)
                 in
                 List.take 1 sortedByFirst ++ List.take 1 sortedByLast
            )
@@ -110,10 +110,14 @@ sortTuplesByLastIndex tupleNumbers =
         (\( _, indexesA ) ( _, indexesB ) ->
             let
                 first =
-                    List.head indexesA |> Maybe.withDefault 0
+                    List.reverse indexesA
+                        |> List.head
+                        |> Maybe.withDefault 0
 
                 second =
-                    List.head indexesB |> Maybe.withDefault 0
+                    List.reverse indexesB
+                        |> List.head
+                        |> Maybe.withDefault 0
             in
             case compare first second of
                 LT ->
