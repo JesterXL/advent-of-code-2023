@@ -1,6 +1,6 @@
 module Day1Test exposing (..)
 
-import Day1 exposing (getCalibration)
+import Day1 exposing (getCalibration, puzzleInput, sampleInput)
 import Dict
 import Expect exposing (Expectation)
 import Fuzz exposing (Fuzzer, floatRange, int, list, string)
@@ -15,11 +15,15 @@ suite =
                 \_ ->
                     let
                         calibration =
-                            getCalibration """1abc2
-pqr3stu8vwx
-a1b2c3d4e5f
-treb7uchet"""
+                            getCalibration sampleInput
                     in
                     Expect.equal calibration 142
+            , test "getCalibration should use puzzle input" <|
+                \_ ->
+                    let
+                        calibration =
+                            getCalibration puzzleInput
+                    in
+                    Expect.equal calibration 54927
             ]
         ]
