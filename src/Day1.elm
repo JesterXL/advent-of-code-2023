@@ -5,7 +5,7 @@ module Day1 exposing (getCalibration, numberWordsStringToNumbers, puzzleInput, s
 
 getCalibration : String -> Int
 getCalibration stringInput =
-    String.split "\n" stringInput
+    String.lines stringInput
         |> List.map (\string -> String.filter Char.isDigit string)
         |> List.map
             (\str ->
@@ -26,6 +26,57 @@ sampleInput =
 pqr3stu8vwx
 a1b2c3d4e5f
 treb7uchet"""
+
+
+numberWordsStringToNumbers : String -> Int
+numberWordsStringToNumbers input =
+    [ ( "1", String.indexes "one" input )
+    , ( "2", String.indexes "two" input )
+    , ( "3", String.indexes "three" input )
+    , ( "4", String.indexes "four" input )
+    , ( "5", String.indexes "five" input )
+    , ( "6", String.indexes "six" input )
+    , ( "7", String.indexes "seven" input )
+    , ( "8", String.indexes "eight" input )
+    , ( "9", String.indexes "nine" input )
+    ]
+        |> List.filterMap
+            (\( value, indexes ) ->
+                if List.length indexes > 0 then
+                    Just ( value, indexes )
+
+                else
+                    Nothing
+            )
+        |> List.sortWith
+            (\( _, indexesA ) ( _, indexesB ) ->
+                let
+                    first =
+                        List.head indexesA |> Maybe.withDefault 0
+
+                    second =
+                        List.head indexesB |> Maybe.withDefault 0
+                in
+                case compare first second of
+                    LT ->
+                        LT
+
+                    EQ ->
+                        EQ
+
+                    GT ->
+                        GT
+            )
+        |> (\tupleNumbers ->
+                List.take 1 tupleNumbers ++ (List.reverse tupleNumbers |> List.take 1)
+           )
+        |> List.map
+            (\( value, _ ) ->
+                value
+            )
+        |> List.foldl (\char acc -> acc ++ char) ""
+        |> String.toInt
+        |> Maybe.withDefault 0
 
 
 puzzleInput : String
@@ -1030,8 +1081,3 @@ jone4ccn8
 nftdkmtmcz4
 nlnineeightmndkqz8nineonenrqm
 nrhdxfsqvxcbcghf35eightthreeseven5"""
-
-
-numberWordsStringToNumbers : String -> Int
-numberWordsStringToNumbers input =
-    29
