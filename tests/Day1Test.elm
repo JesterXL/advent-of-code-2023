@@ -39,7 +39,7 @@ suite =
             , test "numberWordsStringToNumbers should parse basic input xtwone3four" <|
                 \_ ->
                     Expect.equal (numberWordsStringToNumbers "xtwone3four") 24
-            , test "numberWordsStringToNumbers should parse basic input xtwone3four" <|
+            , test "numberWordsStringToNumbers should parse basic input 4nineeightseven2" <|
                 \_ ->
                     Expect.equal (numberWordsStringToNumbers "4nineeightseven2") 42
             ]

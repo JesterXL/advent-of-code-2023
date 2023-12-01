@@ -1,6 +1,6 @@
 module Day1 exposing (getCalibration, numberWordsStringToNumbers, puzzleInput, sampleInput)
 
--- 54927 ... CORRECT, first try, baby!
+-- Part 1: 54927 ... CORRECT, first try, baby!
 
 
 getCalibration : String -> Int
@@ -39,6 +39,15 @@ numberWordsStringToNumbers input =
     , ( "7", String.indexes "seven" input )
     , ( "8", String.indexes "eight" input )
     , ( "9", String.indexes "nine" input )
+    , ( "1", String.indexes "1" input )
+    , ( "2", String.indexes "2" input )
+    , ( "3", String.indexes "3" input )
+    , ( "4", String.indexes "4" input )
+    , ( "5", String.indexes "5" input )
+    , ( "6", String.indexes "6" input )
+    , ( "7", String.indexes "7" input )
+    , ( "8", String.indexes "8" input )
+    , ( "9", String.indexes "9" input )
     ]
         |> List.filterMap
             (\( value, indexes ) ->
