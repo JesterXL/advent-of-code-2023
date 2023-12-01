@@ -58,9 +58,18 @@ numberWordsStringToNumbers input =
                 else
                     Nothing
             )
-        |> sortTuplesByFirstIndex
         |> (\tupleNumbers ->
-                List.take 1 tupleNumbers ++ (List.reverse tupleNumbers |> List.take 1)
+                let
+                    sortedByFirst =
+                        sortTuplesByFirstIndex tupleNumbers
+
+                    sortedByLast =
+                        sortTuplesByLastIndex tupleNumbers
+
+                    -- first
+                    --     = List.take 1 tupleNumbers ++ (List.reverse tupleNumbers |> List.take 1)
+                in
+                List.take 1 sortedByFirst ++ List.take 1 sortedByLast
            )
         |> List.map
             (\( value, _ ) ->
@@ -91,6 +100,30 @@ sortTuplesByFirstIndex tupleNumbers =
 
                 GT ->
                     GT
+        )
+        tupleNumbers
+
+
+sortTuplesByLastIndex : List ( String, List Int ) -> List ( String, List Int )
+sortTuplesByLastIndex tupleNumbers =
+    List.sortWith
+        (\( _, indexesA ) ( _, indexesB ) ->
+            let
+                first =
+                    List.head indexesA |> Maybe.withDefault 0
+
+                second =
+                    List.head indexesB |> Maybe.withDefault 0
+            in
+            case compare first second of
+                LT ->
+                    GT
+
+                EQ ->
+                    EQ
+
+                GT ->
+                    LT
         )
         tupleNumbers
 
