@@ -43,5 +43,26 @@ suite =
                                 |> Maybe.withDefault (Game 12 [])
                     in
                     Expect.equal game3.id 3
+            , test "should parse all games and find our game 3's green 8" <|
+                \_ ->
+                    let
+                        game3FirstSetGreen =
+                            parseAllGames sampleInput
+                                |> Array.fromList
+                                |> Array.get 2
+                                |> Maybe.withDefault (Game 12 [])
+                                |> .sets
+                                |> (\sets ->
+                                        let
+                                            _ =
+                                                Debug.log "sets" sets
+                                        in
+                                        sets
+                                   )
+                                |> List.head
+                                |> Maybe.withDefault { red = 0, green = 0, blue = 0 }
+                                |> .green
+                    in
+                    Expect.equal game3FirstSetGreen 8
             ]
         ]

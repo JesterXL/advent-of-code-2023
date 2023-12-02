@@ -120,7 +120,5 @@ Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green"""
 
 parseAllGames : String -> List Game
 parseAllGames input =
-    [ Game 1 []
-    , Game 2 []
-    , Game 3 [ { red = 0, blue = 0, green = 0 }, { red = 0, blue = 0, green = 8 }, { red = 0, blue = 0, green = 0 } ]
-    ]
+    String.lines input
+        |> List.map parseGame
