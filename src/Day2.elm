@@ -1,4 +1,4 @@
-module Day2 exposing (Game, parseAllGames, parseGame, sampleInput)
+module Day2 exposing (Game, filterByCubeThreshold, parseAllGames, parseGame, sampleInput)
 
 
 parseGame : String -> Game
@@ -122,3 +122,12 @@ parseAllGames : String -> List Game
 parseAllGames input =
     String.lines input
         |> List.map parseGame
+
+
+filterByCubeThreshold : Game -> Bool
+filterByCubeThreshold game =
+    if game.id == 1 || game.id == 2 || game.id == 5 then
+        True
+
+    else
+        False

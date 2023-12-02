@@ -1,7 +1,7 @@
 module Day2Test exposing (..)
 
 import Array exposing (Array)
-import Day2 exposing (Game, parseAllGames, parseGame, sampleInput)
+import Day2 exposing (Game, filterByCubeThreshold, parseAllGames, parseGame, sampleInput)
 import Dict
 import Expect exposing (Expectation)
 import Fuzz exposing (Fuzzer, floatRange, int, list, string)
@@ -52,17 +52,21 @@ suite =
                                 |> Array.get 2
                                 |> Maybe.withDefault (Game 12 [])
                                 |> .sets
-                                |> (\sets ->
-                                        let
-                                            _ =
-                                                Debug.log "sets" sets
-                                        in
-                                        sets
-                                   )
                                 |> List.head
                                 |> Maybe.withDefault { red = 0, green = 0, blue = 0 }
                                 |> .green
                     in
                     Expect.equal game3FirstSetGreen 8
+            ]
+        , describe "filterByCubeThreshold"
+            [ test "should only find 3 games" <|
+                \_ ->
+                    let
+                        gamesTotal =
+                            parseAllGames sampleInput
+                                |> List.filter filterByCubeThreshold
+                                |> List.length
+                    in
+                    Expect.equal gamesTotal 3
             ]
         ]
