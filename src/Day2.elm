@@ -195,6 +195,82 @@ day2Part1CodeString =
 |> List.sum"""
 
 
+
+---- Part 2
+
+
+minimumCubeAmounts : List CubeSet -> CubeSet
+minimumCubeAmounts sets =
+    List.foldl
+        (\{ red, green, blue } acc ->
+            { acc
+                | red = max red acc.red
+                , green = max green acc.green
+                , blue = max blue acc.blue
+            }
+        )
+        { red = 0, green = 0, blue = 0 }
+        sets
+
+
+powerOfCubeSet : CubeSet -> Int
+powerOfCubeSet cubeSet =
+    cubeSet.red * cubeSet.blue * cubeSet.green
+
+
+
+-- Day 2, Part 2 - 66681... CORRECT! First try, baby!
+
+
+powerOfAllGames : String -> Int
+powerOfAllGames input =
+    input
+        -- parse all game strings into a
+        -- list of game id's and their
+        -- cube sets with red, green, and
+        -- blue values
+        |> parseAllGames
+        -- snatch off just the list of
+        -- cubsets
+        |> List.map .sets
+        -- flatten them into a single
+        -- cubeset wiwth minimum values
+        -- for cubes in a game
+        |> List.map minimumCubeAmounts
+        -- multiply the red, green, and
+        -- blue
+        |> List.map powerOfCubeSet
+        -- sum the products
+        |> List.sum
+
+
+day2Part2 : Int
+day2Part2 =
+    powerOfAllGames puzzleInput
+
+
+day2Part2CodeString : String
+day2Part2CodeString =
+    """"Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green\\n..."
+-- parse all game strings into a
+-- list of game id's and their
+-- cube sets with red, green, and
+-- blue values
+|> parseAllGames
+-- snatch off just the list of
+-- cubsets
+|> List.map .sets
+-- flatten them into a single
+-- cubeset wiwth minimum values
+-- for cubes in a game
+|> List.map minimumCubeAmounts
+-- multiply the red, green, and
+-- blue
+|> List.map powerOfCubeSet
+-- sum the products
+|> List.sum"""
+
+
 puzzleInput : String
 puzzleInput =
     """Game 1: 4 red, 1 green, 15 blue; 6 green, 2 red, 10 blue; 7 blue, 6 green, 4 red; 12 blue, 10 green, 3 red
@@ -297,79 +373,3 @@ Game 97: 10 blue, 5 red, 5 green; 4 red, 8 green, 2 blue; 5 red, 2 green, 15 blu
 Game 98: 11 red, 8 green, 9 blue; 3 blue, 1 green, 14 red; 10 blue, 2 red, 4 green; 7 blue, 11 red, 3 green; 5 red, 12 blue, 4 green; 7 green, 7 blue, 8 red
 Game 99: 3 green, 2 blue, 1 red; 15 red, 8 blue, 7 green; 18 red, 12 blue, 2 green
 Game 100: 11 red, 1 blue, 2 green; 3 red, 3 green; 1 blue, 8 red, 4 green; 5 green, 5 blue, 1 red; 2 green, 1 red, 6 blue; 2 green, 8 red, 1 blue"""
-
-
-
----- Part 2
-
-
-minimumCubeAmounts : List CubeSet -> CubeSet
-minimumCubeAmounts sets =
-    List.foldl
-        (\{ red, green, blue } acc ->
-            { acc
-                | red = max red acc.red
-                , green = max green acc.green
-                , blue = max blue acc.blue
-            }
-        )
-        { red = 0, green = 0, blue = 0 }
-        sets
-
-
-powerOfCubeSet : CubeSet -> Int
-powerOfCubeSet cubeSet =
-    cubeSet.red * cubeSet.blue * cubeSet.green
-
-
-
--- Day 2, Part 2 - 66681... CORRECT! First try, baby!
-
-
-powerOfAllGames : String -> Int
-powerOfAllGames input =
-    input
-        -- parse all game strings into a
-        -- list of game id's and their
-        -- cube sets with red, green, and
-        -- blue values
-        |> parseAllGames
-        -- snatch off just the list of
-        -- cubsets
-        |> List.map .sets
-        -- flatten them into a single
-        -- cubeset wiwth minimum values
-        -- for cubes in a game
-        |> List.map minimumCubeAmounts
-        -- multiply the red, green, and
-        -- blue
-        |> List.map powerOfCubeSet
-        -- sum the products
-        |> List.sum
-
-
-day2Part2 : Int
-day2Part2 =
-    powerOfAllGames puzzleInput
-
-
-day2Part2CodeString : String
-day2Part2CodeString =
-    """"Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green\\n..."
--- parse all game strings into a
--- list of game id's and their
--- cube sets with red, green, and
--- blue values
-|> parseAllGames
--- snatch off just the list of
--- cubsets
-|> List.map .sets
--- flatten them into a single
--- cubeset wiwth minimum values
--- for cubes in a game
-|> List.map minimumCubeAmounts
--- multiply the red, green, and
--- blue
-|> List.map powerOfCubeSet
--- sum the products
-|> List.sum"""
