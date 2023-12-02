@@ -281,15 +281,9 @@ powerOfCubeSet cubeSet =
 
 powerOfAllGames : String -> Int
 powerOfAllGames input =
-    let
-        power =
-            input
-                |> parseAllGames
-                |> List.map .sets
-                |> List.map minimumCubeAmounts
-                |> List.map powerOfCubeSet
-
-        _ =
-            Debug.log "power" power
-    in
-    2286
+    input
+        |> parseAllGames
+        |> List.map .sets
+        |> List.map minimumCubeAmounts
+        |> List.map powerOfCubeSet
+        |> List.sum
