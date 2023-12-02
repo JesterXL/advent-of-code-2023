@@ -126,8 +126,13 @@ parseAllGames input =
 
 filterByCubeThreshold : Game -> Bool
 filterByCubeThreshold game =
-    if game.id == 1 || game.id == 2 || game.id == 5 then
-        True
+    -- only 12 red cubes, 13 green cubes, and 14 blue cubes
+    List.all
+        (\set ->
+            if set.red <= 12 && set.green <= 13 && set.blue <= 14 then
+                True
 
-    else
-        False
+            else
+                False
+        )
+        game.sets
