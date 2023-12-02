@@ -1,7 +1,7 @@
 module Day2Test exposing (..)
 
 import Array exposing (Array)
-import Day2 exposing (Game, filterByCubeThreshold, minimumCubeAmounts, parseAllGames, parseGame, powerOfCubeSet, puzzleInput, sampleInput, summarizeGamesUnderThreshold)
+import Day2 exposing (Game, filterByCubeThreshold, minimumCubeAmounts, parseAllGames, parseGame, powerOfAllGames, powerOfCubeSet, puzzleInput, sampleInput, summarizeGamesUnderThreshold)
 import Dict
 import Expect exposing (Expectation)
 import Fuzz exposing (Fuzzer, floatRange, int, list, string)
@@ -135,5 +135,10 @@ suite =
                             ]
                         )
                         48
+            ]
+        , describe "powerOfAllGames"
+            [ test "should match total power of all games in sample input" <|
+                \_ ->
+                    Expect.equal (powerOfAllGames sampleInput) 2286
             ]
         ]

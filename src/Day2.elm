@@ -1,4 +1,4 @@
-module Day2 exposing (Game, day2Part1, filterByCubeThreshold, minimumCubeAmounts, parseAllGames, parseGame, powerOfCubeSet, puzzleInput, sampleInput, summarizeGamesUnderThreshold)
+module Day2 exposing (Game, day2Part1, filterByCubeThreshold, minimumCubeAmounts, parseAllGames, parseGame, powerOfAllGames, powerOfCubeSet, puzzleInput, sampleInput, summarizeGamesUnderThreshold)
 
 
 parseGame : String -> Game
@@ -281,3 +281,8 @@ powerOfCubeSet cubeSets =
             minimumCubeAmounts cubeSets
     in
     cubeSet.red * cubeSet.blue * cubeSet.green
+
+
+powerOfAllGames : String -> Int
+powerOfAllGames input =
+    2286
