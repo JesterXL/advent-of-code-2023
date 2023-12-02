@@ -1,7 +1,7 @@
 module Day2Test exposing (..)
 
 import Array exposing (Array)
-import Day2 exposing (Game, filterByCubeThreshold, minimumCubeAmounts, parseAllGames, parseGame, puzzleInput, sampleInput, summarizeGamesUnderThreshold)
+import Day2 exposing (Game, filterByCubeThreshold, minimumCubeAmounts, parseAllGames, parseGame, powerOfCubeSet, puzzleInput, sampleInput, summarizeGamesUnderThreshold)
 import Dict
 import Expect exposing (Expectation)
 import Fuzz exposing (Fuzzer, floatRange, int, list, string)
@@ -122,5 +122,18 @@ suite =
                     -- Expect.equal (minimumCubeAmounts sets).red 1
                     -- Expect.equal (minimumCubeAmounts sets).green 3
                     Expect.equal (minimumCubeAmounts sets).blue 4
+            ]
+        , describe "powerOfCubeSet"
+            [ test "should match 1st sample" <|
+                \_ ->
+                    -- 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
+                    Expect.equal
+                        (powerOfCubeSet
+                            [ { blue = 3, red = 4, green = 0 }
+                            , { red = 1, green = 2, blue = 6 }
+                            , { green = 2, red = 0, blue = 0 }
+                            ]
+                        )
+                        48
             ]
         ]

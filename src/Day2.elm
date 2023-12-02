@@ -1,4 +1,4 @@
-module Day2 exposing (Game, day2Part1, filterByCubeThreshold, minimumCubeAmounts, parseAllGames, parseGame, puzzleInput, sampleInput, summarizeGamesUnderThreshold)
+module Day2 exposing (Game, day2Part1, filterByCubeThreshold, minimumCubeAmounts, parseAllGames, parseGame, powerOfCubeSet, puzzleInput, sampleInput, summarizeGamesUnderThreshold)
 
 
 parseGame : String -> Game
@@ -272,3 +272,8 @@ minimumCubeAmounts sets =
         )
         { red = 0, green = 0, blue = 0 }
         sets
+
+
+powerOfCubeSet : List CubeSet -> Int
+powerOfCubeSet cubeSets =
+    48
