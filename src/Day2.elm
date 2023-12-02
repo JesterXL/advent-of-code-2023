@@ -279,6 +279,10 @@ powerOfCubeSet cubeSet =
     cubeSet.red * cubeSet.blue * cubeSet.green
 
 
+
+-- Day 2, Part 2 - 66681... CORRECT! First try, baby!
+
+
 powerOfAllGames : String -> Int
 powerOfAllGames input =
     input

@@ -135,5 +135,8 @@ suite =
             [ test "should match total power of all games in sample input" <|
                 \_ ->
                     Expect.equal (powerOfAllGames sampleInput) 2286
+            , test "should generate our answer with puzzle input" <|
+                \_ ->
+                    Expect.equal (powerOfAllGames puzzleInput) 66681
             ]
         ]
