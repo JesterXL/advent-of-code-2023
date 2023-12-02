@@ -140,4 +140,8 @@ filterByCubeThreshold game =
 
 summarizeGamesUnderThreshold : String -> Int
 summarizeGamesUnderThreshold input =
-    8
+    input
+        |> parseAllGames
+        |> List.filter filterByCubeThreshold
+        |> List.map .id
+        |> List.sum
