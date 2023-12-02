@@ -274,15 +274,22 @@ minimumCubeAmounts sets =
         sets
 
 
-powerOfCubeSet : List CubeSet -> Int
-powerOfCubeSet cubeSets =
-    let
-        cubeSet =
-            minimumCubeAmounts cubeSets
-    in
+powerOfCubeSet : CubeSet -> Int
+powerOfCubeSet cubeSet =
     cubeSet.red * cubeSet.blue * cubeSet.green
 
 
 powerOfAllGames : String -> Int
 powerOfAllGames input =
+    let
+        power =
+            input
+                |> parseAllGames
+                |> List.map .sets
+                |> List.map minimumCubeAmounts
+                |> List.map powerOfCubeSet
+
+        _ =
+            Debug.log "power" power
+    in
     2286
