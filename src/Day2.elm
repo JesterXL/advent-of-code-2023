@@ -1,4 +1,4 @@
-module Day2 exposing (Game, filterByCubeThreshold, parseAllGames, parseGame, puzzleInput, sampleInput, summarizeGamesUnderThreshold)
+module Day2 exposing (Game, day2Part1, filterByCubeThreshold, parseAllGames, parseGame, puzzleInput, sampleInput, summarizeGamesUnderThreshold)
 
 
 parseGame : String -> Game
@@ -149,6 +149,11 @@ summarizeGamesUnderThreshold input =
 
 
 -- Day 2, Part 1, Attempt 1 - 2237... First try, baby!
+
+
+day2Part1 : Int
+day2Part1 =
+    summarizeGamesUnderThreshold puzzleInput
 
 
 puzzleInput : String
