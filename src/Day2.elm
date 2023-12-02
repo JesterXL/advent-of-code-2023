@@ -3,16 +3,9 @@ module Day2 exposing (parseGame)
 
 parseGame : String -> Game
 parseGame gameString =
-    let
-        sets =
-            parseCubeSets gameString
-
-        _ =
-            Debug.log "sets" sets
-    in
     Game
         (parseGameID gameString)
-        sets
+        (parseCubeSets gameString)
 
 
 type alias Game =
