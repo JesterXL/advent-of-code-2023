@@ -88,5 +88,25 @@ suite =
                             ]
                     in
                     Expect.equal (minimumCubeAmounts sets).red 4
+            , test "should get the minimum amount matching the sample input - green" <|
+                \_ ->
+                    let
+                        sets =
+                            [ { blue = 3, red = 4, green = 0 }
+                            , { red = 1, green = 2, blue = 6 }
+                            , { green = 2, red = 0, blue = 0 }
+                            ]
+                    in
+                    Expect.equal (minimumCubeAmounts sets).green 2
+            , test "should get the minimum amount matching the sample input - blue" <|
+                \_ ->
+                    let
+                        sets =
+                            [ { blue = 3, red = 4, green = 0 }
+                            , { red = 1, green = 2, blue = 6 }
+                            , { green = 2, red = 0, blue = 0 }
+                            ]
+                    in
+                    Expect.equal (minimumCubeAmounts sets).blue 6
             ]
         ]

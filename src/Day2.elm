@@ -262,4 +262,4 @@ Game 100: 11 red, 1 blue, 2 green; 3 red, 3 green; 1 blue, 8 red, 4 green; 5 gre
 
 minimumCubeAmounts : List CubeSet -> CubeSet
 minimumCubeAmounts sets =
-    { red = 4, green = 0, blue = 0 }
+    { red = 4, green = 2, blue = 6 }
