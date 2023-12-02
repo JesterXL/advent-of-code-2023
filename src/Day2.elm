@@ -5,52 +5,7 @@ parseGame : String -> Game
 parseGame gameString =
     let
         sets =
-            String.split ":" gameString
-                |> List.drop 1
-                |> List.map
-                    (\str ->
-                        String.split ";" str
-                            |> List.map
-                                (\colorsStr ->
-                                    String.split "," colorsStr
-                                        |> List.map String.trimLeft
-                                        |> List.map
-                                            (\numberAndColor ->
-                                                let
-                                                    numberAndColorList =
-                                                        String.split " " numberAndColor
-
-                                                    total =
-                                                        List.head numberAndColorList
-                                                            |> Maybe.withDefault "0"
-                                                            |> String.toInt
-                                                            |> Maybe.withDefault 0
-
-                                                    color =
-                                                        List.drop 1 numberAndColorList
-                                                            |> List.head
-                                                            |> Maybe.withDefault "unknowncolor"
-                                                            |> colorFromString
-                                                            |> Maybe.withDefault Red
-                                                in
-                                                ( total, color )
-                                            )
-                                        |> List.foldl
-                                            (\( total, color ) cubeSet ->
-                                                case color of
-                                                    Red ->
-                                                        { cubeSet | red = total }
-
-                                                    Green ->
-                                                        { cubeSet | green = total }
-
-                                                    Blue ->
-                                                        { cubeSet | blue = total }
-                                            )
-                                            { red = 0, blue = 0, green = 0 }
-                                )
-                    )
-                |> List.foldl (++) []
+            parseCubeSets gameString
 
         _ =
             Debug.log "sets" sets
@@ -87,6 +42,56 @@ parseGameID gameString =
         |> List.filterMap String.toInt
         |> List.head
         |> Maybe.withDefault 0
+
+
+parseCubeSets : String -> List CubeSet
+parseCubeSets gameString =
+    String.split ":" gameString
+        |> List.drop 1
+        |> List.map
+            (\str ->
+                String.split ";" str
+                    |> List.map
+                        (\colorsStr ->
+                            String.split "," colorsStr
+                                |> List.map String.trimLeft
+                                |> List.map
+                                    (\numberAndColor ->
+                                        let
+                                            numberAndColorList =
+                                                String.split " " numberAndColor
+
+                                            total =
+                                                List.head numberAndColorList
+                                                    |> Maybe.withDefault "0"
+                                                    |> String.toInt
+                                                    |> Maybe.withDefault 0
+
+                                            color =
+                                                List.drop 1 numberAndColorList
+                                                    |> List.head
+                                                    |> Maybe.withDefault "unknowncolor"
+                                                    |> colorFromString
+                                                    |> Maybe.withDefault Red
+                                        in
+                                        ( total, color )
+                                    )
+                                |> List.foldl
+                                    (\( total, color ) cubeSet ->
+                                        case color of
+                                            Red ->
+                                                { cubeSet | red = total }
+
+                                            Green ->
+                                                { cubeSet | green = total }
+
+                                            Blue ->
+                                                { cubeSet | blue = total }
+                                    )
+                                    { red = 0, blue = 0, green = 0 }
+                        )
+            )
+        |> List.foldl (++) []
 
 
 type Color
