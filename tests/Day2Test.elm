@@ -108,5 +108,19 @@ suite =
                             ]
                     in
                     Expect.equal (minimumCubeAmounts sets).blue 6
+            , test "should match game 2 max" <|
+                \_ ->
+                    let
+                        -- 1 red, 3 green, and 4 blue cubes.
+                        -- Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue
+                        sets =
+                            [ { blue = 1, red = 0, green = 2 }
+                            , { green = 3, blue = 4, red = 1 }
+                            , { green = 1, blue = 1, red = 0 }
+                            ]
+                    in
+                    -- Expect.equal (minimumCubeAmounts sets).red 1
+                    -- Expect.equal (minimumCubeAmounts sets).green 3
+                    Expect.equal (minimumCubeAmounts sets).blue 4
             ]
         ]
