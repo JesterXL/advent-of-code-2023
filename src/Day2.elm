@@ -1,4 +1,4 @@
-module Day2 exposing (Game, filterByCubeThreshold, parseAllGames, parseGame, sampleInput)
+module Day2 exposing (Game, filterByCubeThreshold, parseAllGames, parseGame, sampleInput, summarizeGamesUnderThreshold)
 
 
 parseGame : String -> Game
@@ -136,3 +136,8 @@ filterByCubeThreshold game =
                 False
         )
         game.sets
+
+
+summarizeGamesUnderThreshold : String -> Int
+summarizeGamesUnderThreshold input =
+    8

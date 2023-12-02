@@ -1,7 +1,7 @@
 module Day2Test exposing (..)
 
 import Array exposing (Array)
-import Day2 exposing (Game, filterByCubeThreshold, parseAllGames, parseGame, sampleInput)
+import Day2 exposing (Game, filterByCubeThreshold, parseAllGames, parseGame, sampleInput, summarizeGamesUnderThreshold)
 import Dict
 import Expect exposing (Expectation)
 import Fuzz exposing (Fuzzer, floatRange, int, list, string)
@@ -68,5 +68,10 @@ suite =
                                 |> List.length
                     in
                     Expect.equal gamesTotal 3
+            ]
+        , describe "summarizeGamesUnderThreshold"
+            [ test "should find 3 games under threshold matching the 8 in sampleInput" <|
+                \_ ->
+                    Expect.equal (summarizeGamesUnderThreshold sampleInput) 8
             ]
         ]
