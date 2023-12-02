@@ -276,4 +276,8 @@ minimumCubeAmounts sets =
 
 powerOfCubeSet : List CubeSet -> Int
 powerOfCubeSet cubeSets =
-    48
+    let
+        cubeSet =
+            minimumCubeAmounts cubeSets
+    in
+    cubeSet.red * cubeSet.blue * cubeSet.green
