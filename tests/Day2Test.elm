@@ -1,7 +1,7 @@
 module Day2Test exposing (..)
 
 import Array exposing (Array)
-import Day2 exposing (parseGame)
+import Day2 exposing (Game, parseAllGames, parseGame, sampleInput)
 import Dict
 import Expect exposing (Expectation)
 import Fuzz exposing (Fuzzer, floatRange, int, list, string)
@@ -31,5 +31,17 @@ suite =
                                 |> Maybe.withDefault { red = 0, blue = 0, green = 0 }
                     in
                     Expect.equal secondSet.blue 6
+            ]
+        , describe "parseAllGames"
+            [ test "should parse all games and find our game 3" <|
+                \_ ->
+                    let
+                        game3 =
+                            parseAllGames sampleInput
+                                |> Array.fromList
+                                |> Array.get 2
+                                |> Maybe.withDefault (Game 12 [])
+                    in
+                    Expect.equal game3.id 3
             ]
         ]
