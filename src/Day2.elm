@@ -1,4 +1,4 @@
-module Day2 exposing (Game, day2Part1, filterByCubeThreshold, minimumCubeAmounts, parseAllGames, parseGame, powerOfAllGames, powerOfCubeSet, puzzleInput, sampleInput, summarizeGamesUnderThreshold)
+module Day2 exposing (Game, day2Part1, day2Part1CodeString, day2Part2, day2Part2CodeString, filterByCubeThreshold, minimumCubeAmounts, parseAllGames, parseGame, powerOfAllGames, powerOfCubeSet, puzzleInput, sampleInput, summarizeGamesUnderThreshold)
 
 
 parseGame : String -> Game
@@ -142,8 +142,14 @@ summarizeGamesUnderThreshold : String -> Int
 summarizeGamesUnderThreshold input =
     input
         |> parseAllGames
+        -- only keep games where ALL of their
+        -- cubesets have a red less than 12,
+        -- a green less than 13, and a blue
+        -- less than 14
         |> List.filter filterByCubeThreshold
+        -- snatch off the id's
         |> List.map .id
+        -- add 'em up
         |> List.sum
 
 
@@ -154,6 +160,25 @@ summarizeGamesUnderThreshold input =
 day2Part1 : Int
 day2Part1 =
     summarizeGamesUnderThreshold puzzleInput
+
+
+day2Part1CodeString : String
+day2Part1CodeString =
+    """"Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green\\n..."
+-- parse all game strings into a
+-- list of game id's and their
+-- cube sets with red, green, and
+-- blue values
+|> parseAllGames
+-- only keep games where ALL of their
+-- cubesets have a red less than 12,
+-- a green less than 13, and a blue
+-- less than 14
+|> List.filter filterByCubeThreshold
+-- snatch off the id's
+|> List.map .id
+-- add 'em up
+|> List.sum"""
 
 
 puzzleInput : String
@@ -286,8 +311,47 @@ powerOfCubeSet cubeSet =
 powerOfAllGames : String -> Int
 powerOfAllGames input =
     input
+        -- parse all game strings into a
+        -- list of game id's and their
+        -- cube sets with red, green, and
+        -- blue values
         |> parseAllGames
+        -- snatch off just the list of
+        -- cubsets
         |> List.map .sets
+        -- flatten them into a single
+        -- cubeset wiwth minimum values
+        -- for cubes in a game
         |> List.map minimumCubeAmounts
+        -- multiply the red, green, and
+        -- blue
         |> List.map powerOfCubeSet
+        -- sum the products
         |> List.sum
+
+
+day2Part2 : Int
+day2Part2 =
+    powerOfAllGames puzzleInput
+
+
+day2Part2CodeString : String
+day2Part2CodeString =
+    """"Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green\\n..."
+-- parse all game strings into a
+-- list of game id's and their
+-- cube sets with red, green, and
+-- blue values
+|> parseAllGames
+-- snatch off just the list of
+-- cubsets
+|> List.map .sets
+-- flatten them into a single
+-- cubeset wiwth minimum values
+-- for cubes in a game
+|> List.map minimumCubeAmounts
+-- multiply the red, green, and
+-- blue
+|> List.map powerOfCubeSet
+-- sum the products
+|> List.sum"""

@@ -4,6 +4,7 @@ import Browser
 import Browser.Dom exposing (Error(..))
 import Browser.Navigation as Nav
 import Day1 exposing (day1Part1, day1Part1CodeString, day1Part2, day1Part2CodeString)
+import Day2 exposing (day2Part1, day2Part1CodeString, day2Part2, day2Part2CodeString)
 import FormatNumber exposing (format)
 import FormatNumber.Locales exposing (Decimals(..), usLocale)
 import Html exposing (Html, a, b, br, button, code, div, h5, iframe, img, li, nav, p, pre, span, text, ul)
@@ -27,6 +28,7 @@ type alias Model =
     { page : Page
     , warmups : Warmups
     , day1 : Day1Model
+    , day2 : Day2Model
     }
 
 
@@ -55,6 +57,12 @@ type alias Day1Model =
     }
 
 
+type alias Day2Model =
+    { thresholdGames : Int
+    , minimumCubeSetPower : Int
+    }
+
+
 initialModel : Model
 initialModel =
     { page = TwoThousandTwentyThreeDay1
@@ -70,6 +78,10 @@ initialModel =
         { trebuchetConfig = 0
         , trebuchetConfigEnhanced = 0
         }
+    , day2 =
+        { thresholdGames = 0
+        , minimumCubeSetPower = 0
+        }
     }
 
 
@@ -83,6 +95,8 @@ type Msg
     | ParseHousePresentsRobot
     | Day1Part1
     | Day1Part2
+    | Day2Part1
+    | Day2Part2
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -93,6 +107,9 @@ update msg model =
 
         day1 =
             model.day1
+
+        day2 =
+            model.day2
     in
     case msg of
         GoToPage page ->
@@ -121,6 +138,12 @@ update msg model =
 
         Day1Part2 ->
             ( { model | day1 = { day1 | trebuchetConfigEnhanced = day1Part2 } }, Cmd.none )
+
+        Day2Part1 ->
+            ( { model | day2 = { day2 | thresholdGames = day2Part1 } }, Cmd.none )
+
+        Day2Part2 ->
+            ( { model | day2 = { day2 | minimumCubeSetPower = day2Part2 } }, Cmd.none )
 
 
 view : Model -> Browser.Document Msg
@@ -239,7 +262,31 @@ view model =
                         ]
 
                 TwoThousandTwentyThreeDay2 ->
-                    div [] [ tabs2023 model.page, div [ class "m-6 block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700" ] [] ]
+                    div []
+                        [ tabs2023 model.page
+                        , div [ class "flex flex-row gap-6 p-6" ]
+                            [ div [ class "flex flex-col gap-6 block p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700" ]
+                                [ h5 [ class "mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white" ] [ text "Threshold Games" ]
+                                , div [ class "font-normal text-gray-700 dark:text-gray-400" ] [ text ("Threshold Games: " ++ formatInt model.day2.thresholdGames) ]
+                                , button
+                                    [ class "ext-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                                    , onClick Day2Part1
+                                    ]
+                                    [ text "Calculate Threshold Games" ]
+                                , elmCode day2Part1CodeString
+                                ]
+                            , div [ class "flex flex-col gap-6 block p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700" ]
+                                [ h5 [ class "mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white" ] [ text "Minimum Cube Set Power" ]
+                                , div [ class "font-normal text-gray-700 dark:text-gray-400" ] [ text ("Minimum Cube Set Power: " ++ formatInt model.day2.minimumCubeSetPower) ]
+                                , button
+                                    [ class "ext-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                                    , onClick Day2Part2
+                                    ]
+                                    [ text "Calculate Minimum Cube Set Power" ]
+                                , elmCode day2Part2CodeString
+                                ]
+                            ]
+                        ]
 
                 About ->
                     div [ class "flex flex-row gap-6 p-6 justify-center" ]
