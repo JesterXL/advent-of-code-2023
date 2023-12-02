@@ -43,12 +43,7 @@ parseCubeSets : String -> List CubeSet
 parseCubeSets gameString =
     String.split ":" gameString
         |> List.drop 1
-        |> List.map
-            (\str ->
-                String.split ";" str
-                    |> List.map
-                        parseCubeSetFromColorString
-            )
+        |> List.map parseCubeSetFromColorStrings
         |> List.foldl (++) []
 
 
@@ -95,6 +90,13 @@ parseCubeSetFromColorString colorsString =
         |> List.foldl
             addTotalToCubeSet
             { red = 0, blue = 0, green = 0 }
+
+
+parseCubeSetFromColorStrings : String -> List CubeSet
+parseCubeSetFromColorStrings colorSetsString =
+    String.split ";" colorSetsString
+        |> List.map
+            parseCubeSetFromColorString
 
 
 type Color
