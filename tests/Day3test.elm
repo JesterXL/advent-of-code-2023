@@ -1,9 +1,10 @@
 module Day3test exposing (..)
 
 import Array exposing (Array)
-import Day3 exposing (numberNextToSymbol, parsePartNumbersFromRows, parseRow, sampleInput, sumPartNumbers)
+import Day3 exposing (largeSampleDay3, numberNextToSymbol, numberNextToSymbolCached, parsePartNumbersFromRows, parseRow, puzzleInputDay3, sampleInput, sumPartNumbers)
 import Expect exposing (Expectation)
 import Fuzz exposing (Fuzzer, floatRange, int, list, string)
+import Set
 import Test exposing (..)
 
 
@@ -128,6 +129,9 @@ parsePartNumbersFromRowsSuite =
                     partNumbersFromRows =
                         parsePartNumbersFromRows
                             sampleInput
+
+                    _ =
+                        Debug.log "partNumbersFromRows" (partNumbersFromRows |> .partNumbers |> List.map .value)
                 in
                 Expect.equal (List.length partNumbersFromRows.partNumbers) 8
         , test "should not contain 114" <|
@@ -140,36 +144,16 @@ parsePartNumbersFromRowsSuite =
                             |> List.map .value
                 in
                 Expect.equal (List.member 114 partNumbers) False
-
-        -- , test "should get only expected numbers" <|
-        --     \_ ->
-        --         let
-        --             zero =
-        --                 Maybe.withDefault 0
-        --             partNumbers =
-        --                 parsePartNumbersFromRows sampleInput
-        --                     |> .partNumbers
-        --                     |> List.map .value
-        --                     |> Array.fromList
-        --             first =
-        --                 Array.get 0 partNumbers |> zero
-        --             second =
-        --                 Array.get 1 partNumbers |> zero
-        --             third =
-        --                 Array.get 2 partNumbers |> zero
-        --             fourth =
-        --                 Array.get 3 partNumbers |> zero
-        --             fifth =
-        --                 Array.get 4 partNumbers |> zero
-        --             sixth =
-        --                 Array.get 5 partNumbers |> zero
-        --             seventh =
-        --                 Array.get 6 partNumbers |> zero
-        --             eighth =
-        --                 Array.get 7 partNumbers |> zero
-        --         in
-        --         -- Expect.equal first 467
-        --         Expect.equal second 35
+        , test "should not contain 58" <|
+            \_ ->
+                let
+                    partNumbers =
+                        sampleInput
+                            |> parsePartNumbersFromRows
+                            |> .partNumbers
+                            |> List.map .value
+                in
+                Expect.equal (List.member 58 partNumbers) False
         ]
 
 
@@ -265,6 +249,40 @@ numberNextToSymbolSuite =
                             }
                 in
                 Expect.equal nextTo True
+        , test "numberNextToSymbolCached - should work like before" <|
+            \_ ->
+                let
+                    ( nextTo, _ ) =
+                        numberNextToSymbolCached
+                            { rowIndex = 1
+                            , startIndex = 0
+                            , endIndex = 2
+                            , value = 617
+                            }
+                            { rowIndex = 1
+                            , index = 3
+                            , value = '*'
+                            }
+                            Set.empty
+                in
+                Expect.equal nextTo True
+        , test "numberNextToSymbolCached - should update cache with match" <|
+            \_ ->
+                let
+                    ( _, newCache ) =
+                        numberNextToSymbolCached
+                            { rowIndex = 1
+                            , startIndex = 0
+                            , endIndex = 2
+                            , value = 617
+                            }
+                            { rowIndex = 1
+                            , index = 3
+                            , value = '*'
+                            }
+                            Set.empty
+                in
+                Expect.equal (Set.member 617 newCache) True
         ]
 
 
@@ -274,4 +292,12 @@ day3Suite =
         [ test "day3Part1 should work with sample" <|
             \_ ->
                 Expect.equal (sumPartNumbers sampleInput) 4361
+
+        -- , skip <|
+        --     test "day3Part1 should work with puzzle input" <|
+        --         \_ ->
+        --             -- Expect.equal (sumPartNumbers puzzleInput) 281663 -- Wrong, too low
+        --             -- Expect.equal (sumPartNumbers puzzleInputDay3) 548403
+        --             Expect.equal (sumPartNumbers largeSampleDay3) 1000
+        -- Wrong, too low
         ]
