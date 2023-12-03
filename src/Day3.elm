@@ -1,4 +1,4 @@
-module Day3 exposing (..)
+module Day3 exposing (parsePartNumbersFromRows, parseRow)
 
 import Char exposing (isDigit)
 import List.Extra exposing (indexedFoldl)
@@ -76,4 +76,19 @@ type alias PartNumber =
 type alias Symbol =
     { index : Int
     , value : Char
+    }
+
+
+parsePartNumbersFromRows : String -> PartNumbersFromRows
+parsePartNumbersFromRows input =
+    { rowIndexes = []
+    , partNumbers = []
+    , rogueNumbers = [ 114 ]
+    }
+
+
+type alias PartNumbersFromRows =
+    { rowIndexes : List Int
+    , partNumbers : List PartNumber
+    , rogueNumbers : List Int
     }
