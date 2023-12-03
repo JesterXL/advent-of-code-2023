@@ -105,7 +105,7 @@ parsePartNumbersFromRows input =
                 ( [], [] )
                 rows
 
-        rogueNumbers =
+        goodValues =
             List.filter
                 (\partNumber ->
                     List.any
@@ -116,6 +116,19 @@ parsePartNumbersFromRows input =
                 )
                 allPartNumbers
                 |> List.map .value
+
+        allValues =
+            List.map .value allPartNumbers
+
+        rogueNumbers =
+            allValues
+                |> List.filter
+                    (\value ->
+                        List.member value goodValues == False
+                    )
+
+        _ =
+            Debug.log "goodValues" goodValues
 
         _ =
             Debug.log "rogueNumbers" rogueNumbers
