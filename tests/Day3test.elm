@@ -91,5 +91,16 @@ suite =
                             parseRow 0 ".....+.58."
                     in
                     Expect.equal (List.length row.symbols) 1
+            , test "should get a star symbol at start index 5" <|
+                \_ ->
+                    let
+                        symbol =
+                            parseRow 0 ".....+.58."
+                                |> .symbols
+                                |> Array.fromList
+                                |> Array.get 0
+                                |> Maybe.withDefault { index = 0, value = '!' }
+                    in
+                    Expect.equal symbol.index 5
             ]
         ]
