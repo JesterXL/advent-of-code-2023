@@ -1,7 +1,7 @@
 module Day3test exposing (..)
 
 import Array exposing (Array)
-import Day3 exposing (parsePartNumbersFromRows, parseRow)
+import Day3 exposing (numberNextToSymbol, parsePartNumbersFromRows, parseRow)
 import Expect exposing (Expectation)
 import Fuzz exposing (Fuzzer, floatRange, int, list, string)
 import Test exposing (..)
@@ -25,7 +25,7 @@ parseRowSuite =
                             |> .partNumbers
                             |> Array.fromList
                             |> Array.get 0
-                            |> Maybe.withDefault { startIndex = 0, endIndex = 0, value = 0 }
+                            |> Maybe.withDefault { rowIndex = 0, startIndex = 0, endIndex = 0, value = 0 }
                 in
                 Expect.equal partNumber.value 467
         , test "should find 467 at start index of 0" <|
@@ -36,7 +36,7 @@ parseRowSuite =
                             |> .partNumbers
                             |> Array.fromList
                             |> Array.get 0
-                            |> Maybe.withDefault { startIndex = 0, endIndex = 0, value = 0 }
+                            |> Maybe.withDefault { rowIndex = 0, startIndex = 0, endIndex = 0, value = 0 }
                 in
                 Expect.equal partNumber.startIndex 0
         , test "should find 467 at endIndex of 2" <|
@@ -47,7 +47,7 @@ parseRowSuite =
                             |> .partNumbers
                             |> Array.fromList
                             |> Array.get 0
-                            |> Maybe.withDefault { startIndex = 0, endIndex = 0, value = 0 }
+                            |> Maybe.withDefault { rowIndex = 0, startIndex = 0, endIndex = 0, value = 0 }
                 in
                 Expect.equal partNumber.endIndex 2
         , test "should find 114" <|
@@ -58,7 +58,7 @@ parseRowSuite =
                             |> .partNumbers
                             |> Array.fromList
                             |> Array.get 1
-                            |> Maybe.withDefault { startIndex = 0, endIndex = 0, value = 0 }
+                            |> Maybe.withDefault { rowIndex = 0, startIndex = 0, endIndex = 0, value = 0 }
                 in
                 Expect.equal partNumber.value 114
         , test "should find 114 at index 5" <|
@@ -69,7 +69,7 @@ parseRowSuite =
                             |> .partNumbers
                             |> Array.fromList
                             |> Array.get 1
-                            |> Maybe.withDefault { startIndex = 0, endIndex = 0, value = 0 }
+                            |> Maybe.withDefault { rowIndex = 0, startIndex = 0, endIndex = 0, value = 0 }
                 in
                 Expect.equal partNumber.startIndex 5
         , test "should find 114 at end index 7" <|
@@ -80,7 +80,7 @@ parseRowSuite =
                             |> .partNumbers
                             |> Array.fromList
                             |> Array.get 1
-                            |> Maybe.withDefault { startIndex = 0, endIndex = 0, value = 0 }
+                            |> Maybe.withDefault { rowIndex = 0, startIndex = 0, endIndex = 0, value = 0 }
                 in
                 Expect.equal partNumber.endIndex 7
         , test "should get a star symbol" <|
@@ -98,7 +98,7 @@ parseRowSuite =
                             |> .symbols
                             |> Array.fromList
                             |> Array.get 0
-                            |> Maybe.withDefault { index = 0, value = '!' }
+                            |> Maybe.withDefault { rowIndex = 0, index = 0, value = '!' }
                 in
                 Expect.equal symbol.index 5
         ]
@@ -127,4 +127,26 @@ parsePartNumbersFromRowsSuite =
 ..35..633."""
                 in
                 Expect.equal (List.length partNumbersFromRows.partNumbers) 3
+        ]
+
+
+numberNextToSymbolSuite : Test
+numberNextToSymbolSuite =
+    describe "numberNextToSymbol"
+        [ test "should find a symbol bottom right" <|
+            \_ ->
+                let
+                    nextTo =
+                        numberNextToSymbol
+                            { rowIndex = 0
+                            , startIndex = 0
+                            , endIndex = 2
+                            , value = 467
+                            }
+                            { rowIndex = 1
+                            , index = 3
+                            , value = '*'
+                            }
+                in
+                Expect.equal nextTo True
         ]

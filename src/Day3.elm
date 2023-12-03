@@ -1,4 +1,4 @@
-module Day3 exposing (parsePartNumbersFromRows, parseRow)
+module Day3 exposing (numberNextToSymbol, parsePartNumbersFromRows, parseRow)
 
 import Char exposing (isDigit)
 import List.Extra exposing (indexedFoldl)
@@ -31,7 +31,7 @@ parseRow rowIndex input =
                     if numTracker.tracking == True then
                         ( { numTracker
                             | tracking = False
-                            , partNumbers = numTracker.partNumbers ++ [ PartNumber numTracker.startIndex (index - 1) (String.fromList numTracker.charDigits |> String.toInt |> Maybe.withDefault 0) ]
+                            , partNumbers = numTracker.partNumbers ++ [ PartNumber rowIndex numTracker.startIndex (index - 1) (String.fromList numTracker.charDigits |> String.toInt |> Maybe.withDefault 0) ]
                           }
                         , syms
                         )
@@ -42,13 +42,20 @@ parseRow rowIndex input =
                 else if numTracker.tracking == True then
                     ( { numTracker
                         | tracking = False
-                        , partNumbers = numTracker.partNumbers ++ [ PartNumber numTracker.startIndex (index - 1) (String.fromList numTracker.charDigits |> String.toInt |> Maybe.withDefault 0) ]
+                        , partNumbers =
+                            numTracker.partNumbers
+                                ++ [ PartNumber
+                                        rowIndex
+                                        numTracker.startIndex
+                                        (index - 1)
+                                        (String.fromList numTracker.charDigits |> String.toInt |> Maybe.withDefault 0)
+                                   ]
                       }
                     , syms
                     )
 
                 else
-                    ( numTracker, syms ++ [ Symbol index char ] )
+                    ( numTracker, syms ++ [ Symbol rowIndex index char ] )
             )
             ( { tracking = False, partNumbers = [], startIndex = -1, charDigits = [] }, [] )
         |> (\( numTracker, syms ) ->
@@ -67,14 +74,16 @@ type alias Row =
 
 
 type alias PartNumber =
-    { startIndex : Int
+    { rowIndex : Int
+    , startIndex : Int
     , endIndex : Int
     , value : Int
     }
 
 
 type alias Symbol =
-    { index : Int
+    { rowIndex : Int
+    , index : Int
     , value : Char
     }
 
@@ -94,7 +103,7 @@ parsePartNumbersFromRows input =
             Debug.log "rows" rows
     in
     { rowIndexes = []
-    , partNumbers = [ PartNumber 0 0 0, PartNumber 0 0 0, PartNumber 0 0 0 ]
+    , partNumbers = [ PartNumber 0 0 0 0, PartNumber 0 0 0 0, PartNumber 0 0 0 0 ]
     , rogueNumbers = [ 114 ]
     }
 
@@ -104,3 +113,8 @@ type alias PartNumbersFromRows =
     , partNumbers : List PartNumber
     , rogueNumbers : List Int
     }
+
+
+numberNextToSymbol : PartNumber -> Symbol -> Bool
+numberNextToSymbol partNumber symbol =
+    True
