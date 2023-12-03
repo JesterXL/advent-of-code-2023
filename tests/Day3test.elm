@@ -84,5 +84,12 @@ suite =
                                 |> Maybe.withDefault { startIndex = 0, endIndex = 0, value = 0 }
                     in
                     Expect.equal partNumber.endIndex 7
+            , test "should get a star symbol" <|
+                \_ ->
+                    let
+                        row =
+                            parseRow 0 ".....+.58."
+                    in
+                    Expect.equal (List.length row.symbols) 1
             ]
         ]
