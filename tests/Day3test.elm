@@ -18,5 +18,38 @@ suite =
                             parseRow 0 "467..114.."
                     in
                     Expect.equal (List.length row.partNumbers) 2
+            , test "should find 467" <|
+                \_ ->
+                    let
+                        partNumber =
+                            parseRow 0 "467..114.."
+                                |> .partNumbers
+                                |> Array.fromList
+                                |> Array.get 0
+                                |> Maybe.withDefault { startIndex = 0, endIndex = 0, value = 0 }
+                    in
+                    Expect.equal partNumber.value 467
+            , test "should find 467 at start index of 0" <|
+                \_ ->
+                    let
+                        partNumber =
+                            parseRow 0 "467..114.."
+                                |> .partNumbers
+                                |> Array.fromList
+                                |> Array.get 0
+                                |> Maybe.withDefault { startIndex = 0, endIndex = 0, value = 0 }
+                    in
+                    Expect.equal partNumber.startIndex 0
+            , test "should find 467 at endIndex of 2" <|
+                \_ ->
+                    let
+                        partNumber =
+                            parseRow 0 "467..114.."
+                                |> .partNumbers
+                                |> Array.fromList
+                                |> Array.get 0
+                                |> Maybe.withDefault { startIndex = 0, endIndex = 0, value = 0 }
+                    in
+                    Expect.equal partNumber.endIndex 2
             ]
         ]
