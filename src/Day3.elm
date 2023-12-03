@@ -133,15 +133,13 @@ parsePartNumbersFromRows input =
         _ =
             Debug.log "rogueNumbers" rogueNumbers
     in
-    { rowIndexes = []
-    , partNumbers = allPartNumbers
-    , rogueNumbers = [ 114, 58 ]
+    { partNumbers = allPartNumbers
+    , rogueNumbers = rogueNumbers
     }
 
 
 type alias PartNumbersFromRows =
-    { rowIndexes : List Int
-    , partNumbers : List PartNumber
+    { partNumbers : List PartNumber
     , rogueNumbers : List Int
     }
 
