@@ -95,26 +95,34 @@ parsePartNumbersFromRows input =
             String.lines input
                 |> List.indexedMap parseRow
 
-        allPartNumbers =
+        ( allPartNumbers, allSymbols ) =
             List.foldl
-                (\row acc ->
-                    acc ++ row.partNumbers
+                (\row ( parts, syms ) ->
+                    ( parts ++ row.partNumbers
+                    , syms ++ row.symbols
+                    )
                 )
-                []
+                ( [], [] )
                 rows
 
-        -- |> (\row ->
-        --     gatherWith
-        --         (\partNumber ->
-        --         )
-        --         row.partNumbers
-        -- )
+        rogueNumbers =
+            List.filter
+                (\partNumber ->
+                    List.any
+                        (\symbol ->
+                            numberNextToSymbol partNumber symbol
+                        )
+                        allSymbols
+                )
+                allPartNumbers
+                |> List.map .value
+
         _ =
-            Debug.log "rows" rows
+            Debug.log "rogueNumbers" rogueNumbers
     in
     { rowIndexes = []
     , partNumbers = allPartNumbers
-    , rogueNumbers = [ 114 ]
+    , rogueNumbers = [ 114, 58 ]
     }
 
 

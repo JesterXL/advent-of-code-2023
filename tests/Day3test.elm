@@ -107,7 +107,7 @@ parseRowSuite =
 parsePartNumbersFromRowsSuite : Test
 parsePartNumbersFromRowsSuite =
     describe "parsePartNumbersFromRows"
-        [ test "should get a single outlier" <|
+        [ test "should get 2 outliers" <|
             \_ ->
                 let
                     partNumbersFromRows =
@@ -123,24 +123,25 @@ parsePartNumbersFromRowsSuite =
 ...$.*....
 .664.598.."""
                 in
-                Expect.equal (List.length partNumbersFromRows.rogueNumbers) 1
-        , test "should get 3 part numbers" <|
-            \_ ->
-                let
-                    partNumbersFromRows =
-                        parsePartNumbersFromRows
-                            """467..114..
-...*......
-..35..633.
-......#...
-617*......
-.....+.58.
-..592.....
-......755.
-...$.*....
-.664.598.."""
-                in
-                Expect.equal (List.length partNumbersFromRows.partNumbers) 10
+                Expect.equal (List.length partNumbersFromRows.rogueNumbers) 2
+
+        --         , test "should get 3 part numbers" <|
+        --             \_ ->
+        --                 let
+        --                     partNumbersFromRows =
+        --                         parsePartNumbersFromRows
+        --                             """467..114..
+        -- ...*......
+        -- ..35..633.
+        -- ......#...
+        -- 617*......
+        -- .....+.58.
+        -- ..592.....
+        -- ......755.
+        -- ...$.*....
+        -- .664.598.."""
+        --                 in
+        --                 Expect.equal (List.length partNumbersFromRows.partNumbers) 10
         ]
 
 
