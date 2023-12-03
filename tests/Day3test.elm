@@ -1,7 +1,7 @@
 module Day3test exposing (..)
 
 import Array exposing (Array)
-import Day3 exposing (numberNextToSymbol, parsePartNumbersFromRows, parseRow)
+import Day3 exposing (numberNextToSymbol, parsePartNumbersFromRows, parseRow, sampleInput, sumPartNumbers)
 import Expect exposing (Expectation)
 import Fuzz exposing (Fuzzer, floatRange, int, list, string)
 import Test exposing (..)
@@ -119,36 +119,57 @@ parsePartNumbersFromRowsSuite =
                 let
                     partNumbersFromRows =
                         parsePartNumbersFromRows
-                            """467..114..
-...*......
-..35..633.
-......#...
-617*......
-.....+.58.
-..592.....
-......755.
-...$.*....
-.664.598.."""
+                            sampleInput
                 in
                 Expect.equal (List.length partNumbersFromRows.rogueNumbers) 2
+        , test "should get 8 part numbers out of 10 numbers" <|
+            \_ ->
+                let
+                    partNumbersFromRows =
+                        parsePartNumbersFromRows
+                            sampleInput
+                in
+                Expect.equal (List.length partNumbersFromRows.partNumbers) 8
+        , test "should not contain 114" <|
+            \_ ->
+                let
+                    partNumbers =
+                        sampleInput
+                            |> parsePartNumbersFromRows
+                            |> .partNumbers
+                            |> List.map .value
+                in
+                Expect.equal (List.member 114 partNumbers) False
 
-        --         , test "should get 3 part numbers" <|
-        --             \_ ->
-        --                 let
-        --                     partNumbersFromRows =
-        --                         parsePartNumbersFromRows
-        --                             """467..114..
-        -- ...*......
-        -- ..35..633.
-        -- ......#...
-        -- 617*......
-        -- .....+.58.
-        -- ..592.....
-        -- ......755.
-        -- ...$.*....
-        -- .664.598.."""
-        --                 in
-        --                 Expect.equal (List.length partNumbersFromRows.partNumbers) 10
+        -- , test "should get only expected numbers" <|
+        --     \_ ->
+        --         let
+        --             zero =
+        --                 Maybe.withDefault 0
+        --             partNumbers =
+        --                 parsePartNumbersFromRows sampleInput
+        --                     |> .partNumbers
+        --                     |> List.map .value
+        --                     |> Array.fromList
+        --             first =
+        --                 Array.get 0 partNumbers |> zero
+        --             second =
+        --                 Array.get 1 partNumbers |> zero
+        --             third =
+        --                 Array.get 2 partNumbers |> zero
+        --             fourth =
+        --                 Array.get 3 partNumbers |> zero
+        --             fifth =
+        --                 Array.get 4 partNumbers |> zero
+        --             sixth =
+        --                 Array.get 5 partNumbers |> zero
+        --             seventh =
+        --                 Array.get 6 partNumbers |> zero
+        --             eighth =
+        --                 Array.get 7 partNumbers |> zero
+        --         in
+        --         -- Expect.equal first 467
+        --         Expect.equal second 35
         ]
 
 
@@ -173,6 +194,24 @@ numberNextToSymbolSuite =
                             }
                 in
                 Expect.equal nextTo True
+        , test "should not find a symbol next to 114" <|
+            \_ ->
+                let
+                    -- 467..114..
+                    -- ...*......
+                    nextTo =
+                        numberNextToSymbol
+                            { rowIndex = 0
+                            , startIndex = 5
+                            , endIndex = 7
+                            , value = 114
+                            }
+                            { rowIndex = 1
+                            , index = 3
+                            , value = '*'
+                            }
+                in
+                Expect.equal nextTo False
         , test "should find symbol top right" <|
             \_ ->
                 let
@@ -226,4 +265,13 @@ numberNextToSymbolSuite =
                             }
                 in
                 Expect.equal nextTo True
+        ]
+
+
+day3Suite : Test
+day3Suite =
+    describe "day3Part1"
+        [ test "day3Part1 should work with sample" <|
+            \_ ->
+                Expect.equal (sumPartNumbers sampleInput) 4361
         ]

@@ -1,4 +1,4 @@
-module Day3 exposing (numberNextToSymbol, parsePartNumbersFromRows, parseRow)
+module Day3 exposing (numberNextToSymbol, parsePartNumbersFromRows, parseRow, sampleInput, sumPartNumbers)
 
 import Char exposing (isDigit)
 import List.Extra exposing (gatherWith, indexedFoldl)
@@ -105,7 +105,7 @@ parsePartNumbersFromRows input =
                 ( [], [] )
                 rows
 
-        goodValues =
+        validPartNumbers =
             List.filter
                 (\partNumber ->
                     List.any
@@ -115,7 +115,9 @@ parsePartNumbersFromRows input =
                         allSymbols
                 )
                 allPartNumbers
-                |> List.map .value
+
+        validValues =
+            List.map .value validPartNumbers
 
         allValues =
             List.map .value allPartNumbers
@@ -124,16 +126,15 @@ parsePartNumbersFromRows input =
             allValues
                 |> List.filter
                     (\value ->
-                        List.member value goodValues == False
+                        List.member value validValues == False
                     )
 
-        _ =
-            Debug.log "goodValues" goodValues
-
-        _ =
-            Debug.log "rogueNumbers" rogueNumbers
+        -- _ =
+        --     Debug.log "validValues" validValues
+        -- _ =
+        --     Debug.log "rogueNumbers" rogueNumbers
     in
-    { partNumbers = allPartNumbers
+    { partNumbers = validPartNumbers
     , rogueNumbers = rogueNumbers
     }
 
@@ -171,3 +172,44 @@ distance ( x1, y1 ) ( x2, y2 ) =
         |> toFloat
         |> sqrt
         |> round
+
+
+sumPartNumbers : String -> Int
+sumPartNumbers input =
+    let
+        result =
+            parsePartNumbersFromRows input
+
+        wat =
+            result
+                |> .partNumbers
+                |> List.map .value
+
+        rogue =
+            result
+                |> .rogueNumbers
+
+        _ =
+            Debug.log "parts" wat
+
+        _ =
+            Debug.log "rogue" rogue
+    in
+    parsePartNumbersFromRows input
+        |> .partNumbers
+        |> List.map .value
+        |> List.sum
+
+
+sampleInput : String
+sampleInput =
+    """467..114..
+...*......
+..35..633.
+......#...
+617*......
+.....+.58.
+..592.....
+......755.
+...$.*....
+.664.598.."""
