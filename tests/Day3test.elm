@@ -101,6 +101,13 @@ parseRowSuite =
                             |> Maybe.withDefault { rowIndex = 0, index = 0, value = '!' }
                 in
                 Expect.equal symbol.index 5
+        , test "should get a star symbol that's next to a number" <|
+            \_ ->
+                let
+                    row =
+                        parseRow 0 "617*......"
+                in
+                Expect.equal (List.length row.symbols) 1
         ]
 
 
@@ -202,4 +209,22 @@ numberNextToSymbolSuite =
                             }
                 in
                 Expect.equal nextTo False
+
+        -- , test "should not find symbol top left" <|
+        --     \_ ->
+        --         let
+        --             -- 617*......
+        --             nextTo =
+        --                 numberNextToSymbol
+        --                     { rowIndex = 1
+        --                     , startIndex = 6
+        --                     , endIndex = 8
+        --                     , value = 633
+        --                     }
+        --                     { rowIndex = 0
+        --                     , index = 3
+        --                     , value = '*'
+        --                     }
+        --         in
+        --         Expect.equal nextTo False
         ]
