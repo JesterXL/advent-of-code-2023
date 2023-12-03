@@ -10,10 +10,6 @@ parseRow rowIndex input =
         |> String.toList
         |> indexedFoldl
             (\index char ( numTracker, syms ) ->
-                let
-                    _ =
-                        Debug.log "char" (isDigit char)
-                in
                 if isDigit char then
                     if numTracker.tracking == False then
                         ( { numTracker
@@ -131,10 +127,11 @@ parsePartNumbersFromRows input =
                         List.member value goodValues == False
                     )
 
-        -- _ =
-        --     Debug.log "goodValues" goodValues
-        -- _ =
-        --     Debug.log "rogueNumbers" rogueNumbers
+        _ =
+            Debug.log "goodValues" goodValues
+
+        _ =
+            Debug.log "rogueNumbers" rogueNumbers
     in
     { rowIndexes = []
     , partNumbers = allPartNumbers

@@ -209,22 +209,21 @@ numberNextToSymbolSuite =
                             }
                 in
                 Expect.equal nextTo False
-
-        -- , test "should not find symbol top left" <|
-        --     \_ ->
-        --         let
-        --             -- 617*......
-        --             nextTo =
-        --                 numberNextToSymbol
-        --                     { rowIndex = 1
-        --                     , startIndex = 6
-        --                     , endIndex = 8
-        --                     , value = 633
-        --                     }
-        --                     { rowIndex = 0
-        --                     , index = 3
-        --                     , value = '*'
-        --                     }
-        --         in
-        --         Expect.equal nextTo False
+        , test "should find a symbol to the right" <|
+            \_ ->
+                let
+                    -- 617*......
+                    nextTo =
+                        numberNextToSymbol
+                            { rowIndex = 1
+                            , startIndex = 0
+                            , endIndex = 2
+                            , value = 617
+                            }
+                            { rowIndex = 1
+                            , index = 3
+                            , value = '*'
+                            }
+                in
+                Expect.equal nextTo True
         ]
