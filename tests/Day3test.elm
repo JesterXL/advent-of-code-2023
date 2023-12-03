@@ -117,4 +117,14 @@ parsePartNumbersFromRowsSuite =
 ..35..633."""
                 in
                 Expect.equal (List.length partNumbersFromRows.rogueNumbers) 1
+        , test "should get 3 part numbers" <|
+            \_ ->
+                let
+                    partNumbersFromRows =
+                        parsePartNumbersFromRows
+                            """467..114..
+...*......
+..35..633."""
+                in
+                Expect.equal (List.length partNumbersFromRows.partNumbers) 3
         ]

@@ -81,8 +81,20 @@ type alias Symbol =
 
 parsePartNumbersFromRows : String -> PartNumbersFromRows
 parsePartNumbersFromRows input =
+    let
+        rows =
+            String.lines input
+                |> List.indexedMap parseRow
+
+        partNumbers =
+            List.map .partNumbers rows
+                |> List.concat
+
+        _ =
+            Debug.log "rows" rows
+    in
     { rowIndexes = []
-    , partNumbers = []
+    , partNumbers = [ PartNumber 0 0 0, PartNumber 0 0 0, PartNumber 0 0 0 ]
     , rogueNumbers = [ 114 ]
     }
 
