@@ -1,7 +1,7 @@
 module Day3 exposing (numberNextToSymbol, parsePartNumbersFromRows, parseRow)
 
 import Char exposing (isDigit)
-import List.Extra exposing (indexedFoldl)
+import List.Extra exposing (gatherWith, indexedFoldl)
 
 
 parseRow : Int -> String -> Row
@@ -95,15 +95,25 @@ parsePartNumbersFromRows input =
             String.lines input
                 |> List.indexedMap parseRow
 
-        partNumbers =
-            List.map .partNumbers rows
-                |> List.concat
+        allPartNumbers =
+            List.foldl
+                (\row acc ->
+                    acc ++ row.partNumbers
+                )
+                []
+                rows
 
+        -- |> (\row ->
+        --     gatherWith
+        --         (\partNumber ->
+        --         )
+        --         row.partNumbers
+        -- )
         _ =
             Debug.log "rows" rows
     in
     { rowIndexes = []
-    , partNumbers = [ PartNumber 0 0 0 0, PartNumber 0 0 0 0, PartNumber 0 0 0 0 ]
+    , partNumbers = allPartNumbers
     , rogueNumbers = [ 114 ]
     }
 
@@ -117,4 +127,28 @@ type alias PartNumbersFromRows =
 
 numberNextToSymbol : PartNumber -> Symbol -> Bool
 numberNextToSymbol partNumber symbol =
-    True
+    let
+        atLeastOneIsNearby =
+            List.range partNumber.startIndex partNumber.endIndex
+                |> List.map
+                    (\x ->
+                        distance ( x, partNumber.rowIndex ) ( symbol.index, symbol.rowIndex )
+                    )
+                |> List.filter
+                    (\value ->
+                        value == 1
+                    )
+                |> List.length
+                |> (\length ->
+                        length > 0
+                   )
+    in
+    atLeastOneIsNearby
+
+
+distance : ( Int, Int ) -> ( Int, Int ) -> Int
+distance ( x1, y1 ) ( x2, y2 ) =
+    ((x2 - x1) ^ 2 + (y2 - y1) ^ 2)
+        |> toFloat
+        |> sqrt
+        |> round

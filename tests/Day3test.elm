@@ -114,7 +114,14 @@ parsePartNumbersFromRowsSuite =
                         parsePartNumbersFromRows
                             """467..114..
 ...*......
-..35..633."""
+..35..633.
+......#...
+617*......
+.....+.58.
+..592.....
+......755.
+...$.*....
+.664.598.."""
                 in
                 Expect.equal (List.length partNumbersFromRows.rogueNumbers) 1
         , test "should get 3 part numbers" <|
@@ -124,9 +131,16 @@ parsePartNumbersFromRowsSuite =
                         parsePartNumbersFromRows
                             """467..114..
 ...*......
-..35..633."""
+..35..633.
+......#...
+617*......
+.....+.58.
+..592.....
+......755.
+...$.*....
+.664.598.."""
                 in
-                Expect.equal (List.length partNumbersFromRows.partNumbers) 3
+                Expect.equal (List.length partNumbersFromRows.partNumbers) 10
         ]
 
 
@@ -136,6 +150,8 @@ numberNextToSymbolSuite =
         [ test "should find a symbol bottom right" <|
             \_ ->
                 let
+                    -- 467..114..
+                    -- ...*......
                     nextTo =
                         numberNextToSymbol
                             { rowIndex = 0
@@ -149,4 +165,40 @@ numberNextToSymbolSuite =
                             }
                 in
                 Expect.equal nextTo True
+        , test "should find symbol top right" <|
+            \_ ->
+                let
+                    -- ...*......
+                    -- ..35..633.
+                    nextTo =
+                        numberNextToSymbol
+                            { rowIndex = 1
+                            , startIndex = 2
+                            , endIndex = 3
+                            , value = 35
+                            }
+                            { rowIndex = 0
+                            , index = 3
+                            , value = '*'
+                            }
+                in
+                Expect.equal nextTo True
+        , test "should not find symbol top left" <|
+            \_ ->
+                let
+                    -- ...*......
+                    -- ..35..633.
+                    nextTo =
+                        numberNextToSymbol
+                            { rowIndex = 1
+                            , startIndex = 6
+                            , endIndex = 8
+                            , value = 633
+                            }
+                            { rowIndex = 0
+                            , index = 3
+                            , value = '*'
+                            }
+                in
+                Expect.equal nextTo False
         ]
