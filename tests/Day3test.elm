@@ -51,5 +51,38 @@ suite =
                                 |> Maybe.withDefault { startIndex = 0, endIndex = 0, value = 0 }
                     in
                     Expect.equal partNumber.endIndex 2
+            , test "should find 114" <|
+                \_ ->
+                    let
+                        partNumber =
+                            parseRow 0 "467..114.."
+                                |> .partNumbers
+                                |> Array.fromList
+                                |> Array.get 1
+                                |> Maybe.withDefault { startIndex = 0, endIndex = 0, value = 0 }
+                    in
+                    Expect.equal partNumber.value 114
+            , test "should find 114 at index 5" <|
+                \_ ->
+                    let
+                        partNumber =
+                            parseRow 0 "467..114.."
+                                |> .partNumbers
+                                |> Array.fromList
+                                |> Array.get 1
+                                |> Maybe.withDefault { startIndex = 0, endIndex = 0, value = 0 }
+                    in
+                    Expect.equal partNumber.startIndex 5
+            , test "should find 114 at end index 7" <|
+                \_ ->
+                    let
+                        partNumber =
+                            parseRow 0 "467..114.."
+                                |> .partNumbers
+                                |> Array.fromList
+                                |> Array.get 1
+                                |> Maybe.withDefault { startIndex = 0, endIndex = 0, value = 0 }
+                    in
+                    Expect.equal partNumber.endIndex 7
             ]
         ]
