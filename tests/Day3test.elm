@@ -2,7 +2,7 @@ module Day3test exposing (..)
 
 import Array exposing (Array)
 import Day1 exposing (puzzleInput)
-import Day3 exposing (parseRows)
+import Day3 exposing (parseRows, sampleInput)
 import Expect exposing (Expectation)
 import Fuzz exposing (Fuzzer, floatRange, int, list, string)
 import Set
@@ -15,10 +15,17 @@ parseRowsSuite =
         [ test "should get a list of part numbers" <|
             \_ ->
                 let
-                    rows =
+                    ( partNumbers, _ ) =
                         parseRows "467..114.."
                 in
-                Expect.equal (List.length rows) 2
+                Expect.equal (List.length partNumbers) 2
+        , test "should get a list of part numbers across many lines" <|
+            \_ ->
+                let
+                    ( partNumbers, _ ) =
+                        parseRows sampleInput
+                in
+                Expect.equal (List.length partNumbers) 10
         ]
 
 

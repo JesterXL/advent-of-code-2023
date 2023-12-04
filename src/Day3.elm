@@ -1,16 +1,10 @@
 module Day3 exposing (..)
 
 import Char exposing (isDigit)
+import Html exposing (th)
 import List.Extra exposing (Step(..), indexedFoldl, stoppableFoldl)
 import Parser exposing ((|.), (|=), Parser, float, spaces, succeed, symbol)
 import Set exposing (Set)
-
-
-type alias Row =
-    { partNumbers : List PartNumber
-    , symbols : List Symbol
-    , rowIndex : Int
-    }
 
 
 type alias PartNumber =
@@ -29,23 +23,125 @@ type alias Symbol =
     }
 
 
-parseRows : String -> List Row
+parseRows : String -> ( List PartNumber, List Symbol )
 parseRows input =
-    [ { rowIndex = 0
-      , partNumbers =
-            [ { startRowIndex = 0, endRowIndex = 0, startIndex = 0, endIndex = 2, value = 467 }
-            , { startRowIndex = 0, endRowIndex = 0, startIndex = 5, endIndex = 7, value = 114 }
-            ]
-      , symbols =
-            []
-      }
-    , { rowIndex = 1
-      , partNumbers =
-            []
-      , symbols =
-            [ { rowIndex = 0, index = 3, value = '*' } ]
-      }
-    ]
+    let
+        newLineIndexOffset : Bool -> Int
+        newLineIndexOffset hasNewLine =
+            if hasNewLine then
+                1
+
+            else
+                0
+
+        ( partNumbers, symbols ) =
+            input
+                |> String.toList
+                |> indexedFoldl
+                    (\index char acc ->
+                        if isDigit char == True then
+                            if acc.tracking == True then
+                                { acc
+                                    | digits = acc.digits ++ [ char ]
+                                }
+
+                            else
+                                { acc
+                                    | tracking = True
+                                    , digits = [ char ]
+                                    , startRowIndex = acc.rowIndex
+                                    , startIndex = index
+                                    , newLine = False
+                                }
+
+                        else if char == '\n' then
+                            if acc.tracking == True then
+                                { acc
+                                    | newLine = True
+                                    , rowIndex = acc.rowIndex + 1
+                                }
+
+                            else
+                                { acc
+                                    | rowIndex = acc.rowIndex + 1
+                                }
+
+                        else if char == '.' then
+                            if acc.tracking == True then
+                                { acc
+                                    | tracking = False
+                                    , parts =
+                                        acc.parts
+                                            ++ [ { startRowIndex = acc.startRowIndex
+                                                 , endRowIndex = acc.rowIndex
+                                                 , startIndex = acc.startIndex
+                                                 , endIndex = (index - 1) - (acc.columnSize * acc.rowIndex) - newLineIndexOffset acc.newLine
+                                                 , value = String.fromList acc.digits |> String.toInt |> Maybe.withDefault 0
+                                                 }
+                                               ]
+                                }
+
+                            else
+                                acc
+
+                        else if acc.tracking == True then
+                            { acc
+                                | tracking = False
+                                , parts =
+                                    acc.parts
+                                        ++ [ { startRowIndex = acc.startRowIndex
+                                             , endRowIndex = acc.rowIndex
+                                             , startIndex = acc.startIndex
+                                             , endIndex = (index - 1) - (acc.columnSize * acc.rowIndex) - newLineIndexOffset acc.newLine
+                                             , value = String.fromList acc.digits |> String.toInt |> Maybe.withDefault 0
+                                             }
+                                           ]
+                                , syms = acc.syms ++ [ { rowIndex = acc.rowIndex, index = index, value = char } ]
+                            }
+
+                        else
+                            { acc | syms = acc.syms ++ [ { rowIndex = acc.rowIndex, index = index, value = char } ] }
+                    )
+                    { tracking = False
+                    , digits = []
+                    , parts = []
+                    , syms = []
+                    , newLine = False
+                    , startRowIndex = -1
+                    , startIndex = -1
+                    , rowIndex = 0
+                    , columnSize = 1
+                    }
+                |> (\parsedRows ->
+                        ( parsedRows.parts, parsedRows.syms )
+                   )
+
+        _ =
+            Debug.log "partNumbers" partNumbers
+
+        _ =
+            Debug.log "symbols" symbols
+    in
+    ( partNumbers, symbols )
+
+
+createPart : Bool -> List Char -> Int -> Int -> Int -> Int -> PartNumber
+createPart newLine digits startRowIndex currentRowIndex startIndex endIndex =
+    if newLine == False then
+        { startRowIndex = startRowIndex
+        , endRowIndex = currentRowIndex
+        , startIndex = startIndex
+        , endIndex = endIndex
+        , value = String.fromList digits |> String.toInt |> Maybe.withDefault 0
+        }
+
+    else
+        { startRowIndex = startRowIndex
+        , endRowIndex = currentRowIndex
+        , startIndex = startIndex
+        , endIndex = endIndex
+        , value = String.fromList digits |> String.filter (\char -> char /= '\n') |> String.toInt |> Maybe.withDefault 0
+        }
 
 
 
