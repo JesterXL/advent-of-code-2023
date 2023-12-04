@@ -1,8 +1,7 @@
-module Day3 exposing (largeSampleDay3, numberNextToSymbol, numberNextToSymbolCached, parsePartNumbersFromRows, parseRow, puzzleInputDay3, sampleInput, sampleInputWithDupes, sumPartNumbers)
+module Day3 exposing (filterValidPartNumber, largeSampleDay3, numberNextToSymbol, numberNextToSymbolCached, parsePartNumbersFromRows, parseRow, puzzleInputDay3, sampleInput, sampleInputWithDupes, sumPartNumbers)
 
 import Char exposing (isDigit)
-import Html exposing (th)
-import List.Extra exposing (gatherWith, indexedFoldl)
+import List.Extra exposing (Step(..), indexedFoldl, stoppableFoldl)
 import Set exposing (Set)
 
 
@@ -122,11 +121,19 @@ parsePartNumbersFromRows input =
                 )
                 allPartNumbers
 
+        validPartNumbers2 =
+            filterValidPartNumber
+                allSymbols
+                allPartNumbers
+
         _ =
             Debug.log "validPartNumbers" (validPartNumbers |> List.map .value)
 
+        _ =
+            Debug.log "validPartNumbers2" (validPartNumbers2 |> List.map .value)
+
         validValues =
-            List.map .value validPartNumbers
+            List.map .value validPartNumbers2
 
         allValues =
             List.map .value allPartNumbers
@@ -143,9 +150,53 @@ parsePartNumbersFromRows input =
         -- _ =
         --     Debug.log "rogueNumbers" rogueNumbers
     in
-    { partNumbers = validPartNumbers
+    { partNumbers = validPartNumbers2
     , rogueNumbers = rogueNumbers
     }
+
+
+filterValidPartNumber : List Symbol -> List PartNumber -> List PartNumber
+filterValidPartNumber symbols partNumbers =
+    let
+        mainCache =
+            Set.empty
+    in
+    List.foldl
+        (\partNumber ( matchingParts, topCache ) ->
+            let
+                ( nextTo, updatedCache ) =
+                    filterPartNumbersNextToSymbol
+                        symbols
+                        partNumber
+                        topCache
+            in
+            if nextTo == True then
+                ( matchingParts ++ [ partNumber ], updatedCache )
+
+            else
+                ( matchingParts, updatedCache )
+        )
+        ( [], mainCache )
+        partNumbers
+        |> Tuple.first
+
+
+filterPartNumbersNextToSymbol : List Symbol -> PartNumber -> Set Int -> ( Bool, Set Int )
+filterPartNumbersNextToSymbol symbols partNumber startingCache =
+    stoppableFoldl
+        (\currentSymbol ( _, currentCache ) ->
+            let
+                ( nextTo, updatedCache ) =
+                    numberNextToSymbolCached partNumber currentSymbol currentCache
+            in
+            if nextTo == True then
+                Stop ( True, updatedCache )
+
+            else
+                Continue ( False, updatedCache )
+        )
+        ( False, startingCache )
+        symbols
 
 
 type alias PartNumbersFromRows =

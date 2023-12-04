@@ -1,7 +1,8 @@
 module Day3test exposing (..)
 
 import Array exposing (Array)
-import Day3 exposing (largeSampleDay3, numberNextToSymbol, numberNextToSymbolCached, parsePartNumbersFromRows, parseRow, puzzleInputDay3, sampleInput, sumPartNumbers)
+import Day1 exposing (puzzleInput)
+import Day3 exposing (filterValidPartNumber, largeSampleDay3, numberNextToSymbol, numberNextToSymbolCached, parsePartNumbersFromRows, parseRow, puzzleInputDay3, sampleInput, sumPartNumbers)
 import Expect exposing (Expectation)
 import Fuzz exposing (Fuzzer, floatRange, int, list, string)
 import Set
@@ -283,6 +284,61 @@ numberNextToSymbolSuite =
                             Set.empty
                 in
                 Expect.equal (Set.member 617 newCache) True
+        , test "numberNextToSymbolCached - should update cache with match when having mutiple of the same" <|
+            \_ ->
+                let
+                    ( _, newCache ) =
+                        numberNextToSymbolCached
+                            { rowIndex = 1
+                            , startIndex = 0
+                            , endIndex = 2
+                            , value = 617
+                            }
+                            { rowIndex = 1
+                            , index = 3
+                            , value = '*'
+                            }
+                            (Set.insert 617 Set.empty)
+                in
+                Expect.equal (Set.member 617 newCache) True
+        ]
+
+
+filterValidPartNumberSuite : Test
+filterValidPartNumberSuite =
+    describe "filterValidPartNumber"
+        [ test "should get a valid part number" <|
+            \_ ->
+                let
+                    validPartNumberList =
+                        filterValidPartNumber
+                            [ { rowIndex = 1
+                              , index = 3
+                              , value = '*'
+                              }
+                            ]
+                            [ { rowIndex = 1
+                              , startIndex = 0
+                              , endIndex = 2
+                              , value = 617
+                              }
+                            , { rowIndex = 18
+                              , startIndex = 18
+                              , endIndex = 20
+                              , value = 617
+                              }
+                            ]
+
+                    validPartNumber =
+                        validPartNumberList
+                            |> Array.fromList
+                            |> Array.get 0
+                            |> Maybe.withDefault { rowIndex = 0, startIndex = 0, endIndex = 0, value = 0 }
+
+                    _ =
+                        Debug.log "dude" validPartNumberList
+                in
+                Expect.equal validPartNumber.value 617
         ]
 
 
@@ -293,11 +349,12 @@ day3Suite =
             \_ ->
                 Expect.equal (sumPartNumbers sampleInput) 4361
 
-        -- , skip <|
-        --     test "day3Part1 should work with puzzle input" <|
-        --         \_ ->
-        --             -- Expect.equal (sumPartNumbers puzzleInput) 281663 -- Wrong, too low
-        --             -- Expect.equal (sumPartNumbers puzzleInputDay3) 548403
-        --             Expect.equal (sumPartNumbers largeSampleDay3) 1000
+        -- , test "day3Part1 should work with puzzle input" <|
+        --     \_ ->
+        --         -- Expect.equal (sumPartNumbers puzzleInput) 281663 -- Wrong, too low
+        --         -- Expect.equal (sumPartNumbers puzzleInputDay3) 548402
+        --         -- Expect.equal (sumPartNumbers puzzleInput) 573992
+        -- 281663 -- somehow I'm now getting this... what
+        -- Expect.equal (sumPartNumbers largeSampleDay3) 1000
         -- Wrong, too low
         ]
