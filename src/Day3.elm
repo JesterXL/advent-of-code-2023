@@ -1,4 +1,4 @@
-module Day3 exposing (filterValidPartNumber, largeSampleDay3, numberNextToSymbol, numberNextToSymbolCached, parsePartNumbersFromRows, parseRow, puzzleInputDay3, sampleInput, sampleInputWithDupes, sumPartNumbers)
+module Day3 exposing (filterValidPartNumber, largeSampleDay3, numberNextToSymbol, numberNextToSymbolCached, parsePartNumbers, parsePartNumbersFromRows, parseRow, puzzleInputDay3, sampleInput, sampleInputWithDupes, sumPartNumbers)
 
 import Char exposing (isDigit)
 import List.Extra exposing (Step(..), indexedFoldl, stoppableFoldl)
@@ -72,6 +72,25 @@ type alias Row =
     , symbols : List Symbol
     , rowIndex : Int
     }
+
+
+parsePartNumbers : String -> List Row
+parsePartNumbers input =
+    [ { rowIndex = 0
+      , partNumbers =
+            [ { rowIndex = 0, startIndex = 0, endIndex = 2, value = 467 }
+            , { rowIndex = 0, startIndex = 5, endIndex = 7, value = 114 }
+            ]
+      , symbols =
+            []
+      }
+    , { rowIndex = 1
+      , partNumbers =
+            []
+      , symbols =
+            [ { rowIndex = 0, index = 3, value = '*' } ]
+      }
+    ]
 
 
 type alias PartNumber =

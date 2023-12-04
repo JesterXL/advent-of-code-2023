@@ -2,7 +2,7 @@ module Day3test exposing (..)
 
 import Array exposing (Array)
 import Day1 exposing (puzzleInput)
-import Day3 exposing (filterValidPartNumber, largeSampleDay3, numberNextToSymbol, numberNextToSymbolCached, parsePartNumbersFromRows, parseRow, puzzleInputDay3, sampleInput, sumPartNumbers)
+import Day3 exposing (filterValidPartNumber, largeSampleDay3, numberNextToSymbol, numberNextToSymbolCached, parsePartNumbers, parsePartNumbersFromRows, parseRow, puzzleInputDay3, sampleInput, sumPartNumbers)
 import Expect exposing (Expectation)
 import Fuzz exposing (Fuzzer, floatRange, int, list, string)
 import Set
@@ -110,6 +110,21 @@ parseRowSuite =
                         parseRow 0 "617*......"
                 in
                 Expect.equal (List.length row.symbols) 1
+        ]
+
+
+parseRow2Suite : Test
+parseRow2Suite =
+    describe "parsePartNumbers"
+        [ only <|
+            test "should get 2 part numbers" <|
+                \_ ->
+                    let
+                        rows =
+                            parsePartNumbers """467..114..
+...*......"""
+                    in
+                    Expect.equal (List.length rows) 2
         ]
 
 
