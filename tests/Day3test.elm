@@ -2,7 +2,7 @@ module Day3test exposing (..)
 
 import Array exposing (Array)
 import Day1 exposing (puzzleInput)
-import Day3 exposing (parseRows, sampleInput)
+import Day3 exposing (inputAcrossLines, parseRows, sampleInput, sampleInputWithDupes)
 import Expect exposing (Expectation)
 import Fuzz exposing (Fuzzer, floatRange, int, list, string)
 import Set
@@ -26,6 +26,20 @@ parseRowsSuite =
                         parseRows sampleInput
                 in
                 Expect.equal (List.length partNumbers) 10
+        , test "should get a list of part numbers with dupes" <|
+            \_ ->
+                let
+                    ( partNumbers, _ ) =
+                        parseRows sampleInputWithDupes
+                in
+                Expect.equal (List.length partNumbers) 10
+        , test "should get a list of part numbers across newlines" <|
+            \_ ->
+                let
+                    ( partNumbers, _ ) =
+                        parseRows inputAcrossLines
+                in
+                Expect.equal (List.length partNumbers) 5
         ]
 
 

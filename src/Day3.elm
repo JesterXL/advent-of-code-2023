@@ -34,6 +34,14 @@ parseRows input =
             else
                 0
 
+        getColumnSize : Bool -> Int -> Int -> Int
+        getColumnSize columnSizeMade columnSize index =
+            if columnSizeMade == True then
+                columnSize
+
+            else
+                index
+
         ( partNumbers, symbols ) =
             input
                 |> String.toList
@@ -59,11 +67,13 @@ parseRows input =
                                 { acc
                                     | newLine = True
                                     , rowIndex = acc.rowIndex + 1
+                                    , columnSize = getColumnSize acc.columnSizeMade acc.columnSize index
                                 }
 
                             else
                                 { acc
                                     | rowIndex = acc.rowIndex + 1
+                                    , columnSize = getColumnSize acc.columnSizeMade acc.columnSize index
                                 }
 
                         else if char == '.' then
@@ -111,37 +121,19 @@ parseRows input =
                     , startIndex = -1
                     , rowIndex = 0
                     , columnSize = 1
+                    , columnSizeMade = False
                     }
                 |> (\parsedRows ->
                         ( parsedRows.parts, parsedRows.syms )
                    )
 
         _ =
-            Debug.log "partNumbers" partNumbers
+            Debug.log "partNumbers" (partNumbers |> List.map .value)
 
-        _ =
-            Debug.log "symbols" symbols
+        -- _ =
+        --     Debug.log "symbols" symbols
     in
     ( partNumbers, symbols )
-
-
-createPart : Bool -> List Char -> Int -> Int -> Int -> Int -> PartNumber
-createPart newLine digits startRowIndex currentRowIndex startIndex endIndex =
-    if newLine == False then
-        { startRowIndex = startRowIndex
-        , endRowIndex = currentRowIndex
-        , startIndex = startIndex
-        , endIndex = endIndex
-        , value = String.fromList digits |> String.toInt |> Maybe.withDefault 0
-        }
-
-    else
-        { startRowIndex = startRowIndex
-        , endRowIndex = currentRowIndex
-        , startIndex = startIndex
-        , endIndex = endIndex
-        , value = String.fromList digits |> String.filter (\char -> char /= '\n') |> String.toInt |> Maybe.withDefault 0
-        }
 
 
 
@@ -346,6 +338,13 @@ sampleInputWithDupes =
 ......755.
 ...$.*....
 .664.598.."""
+
+
+inputAcrossLines : String
+inputAcrossLines =
+    """467..114.9
+12.*......
+..35..633."""
 
 
 largeSampleDay3 : String
