@@ -1,70 +1,9 @@
-module Day3 exposing (filterValidPartNumber, largeSampleDay3, numberNextToSymbol, numberNextToSymbolCached, parsePartNumbers, parsePartNumbersFromRows, parseRow, puzzleInputDay3, sampleInput, sampleInputWithDupes, sumPartNumbers)
+module Day3 exposing (..)
 
 import Char exposing (isDigit)
 import List.Extra exposing (Step(..), indexedFoldl, stoppableFoldl)
+import Parser exposing ((|.), (|=), Parser, float, spaces, succeed, symbol)
 import Set exposing (Set)
-
-
-parseRow : Int -> String -> Row
-parseRow rowIndex input =
-    input
-        |> String.toList
-        |> indexedFoldl
-            (\index char ( numTracker, syms ) ->
-                if isDigit char then
-                    if numTracker.tracking == False then
-                        ( { numTracker
-                            | tracking = True
-                            , startIndex = index
-                            , charDigits = [ char ]
-                          }
-                        , syms
-                        )
-
-                    else
-                        ( { numTracker
-                            | charDigits = numTracker.charDigits ++ [ char ]
-                          }
-                        , syms
-                        )
-
-                else if char == '.' then
-                    if numTracker.tracking == True then
-                        ( { numTracker
-                            | tracking = False
-                            , partNumbers = numTracker.partNumbers ++ [ PartNumber rowIndex numTracker.startIndex (index - 1) (String.fromList numTracker.charDigits |> String.toInt |> Maybe.withDefault 0) ]
-                          }
-                        , syms
-                        )
-
-                    else
-                        ( numTracker, syms )
-
-                else if numTracker.tracking == True then
-                    ( { numTracker
-                        | tracking = False
-                        , partNumbers =
-                            numTracker.partNumbers
-                                ++ [ PartNumber
-                                        rowIndex
-                                        numTracker.startIndex
-                                        (index - 1)
-                                        (String.fromList numTracker.charDigits |> String.toInt |> Maybe.withDefault 0)
-                                   ]
-                      }
-                    , syms ++ [ Symbol rowIndex index char ]
-                    )
-
-                else
-                    ( numTracker, syms ++ [ Symbol rowIndex index char ] )
-            )
-            ( { tracking = False, partNumbers = [], startIndex = -1, charDigits = [] }, [] )
-        |> (\( numTracker, syms ) ->
-                { partNumbers = numTracker.partNumbers
-                , symbols = syms
-                , rowIndex = rowIndex
-                }
-           )
 
 
 type alias Row =
@@ -74,27 +13,9 @@ type alias Row =
     }
 
 
-parsePartNumbers : String -> List Row
-parsePartNumbers input =
-    [ { rowIndex = 0
-      , partNumbers =
-            [ { rowIndex = 0, startIndex = 0, endIndex = 2, value = 467 }
-            , { rowIndex = 0, startIndex = 5, endIndex = 7, value = 114 }
-            ]
-      , symbols =
-            []
-      }
-    , { rowIndex = 1
-      , partNumbers =
-            []
-      , symbols =
-            [ { rowIndex = 0, index = 3, value = '*' } ]
-      }
-    ]
-
-
 type alias PartNumber =
-    { rowIndex : Int
+    { startRowIndex : Int
+    , endRowIndex : Int
     , startIndex : Int
     , endIndex : Int
     , value : Int
@@ -108,169 +29,186 @@ type alias Symbol =
     }
 
 
-parsePartNumbersFromRows : String -> PartNumbersFromRows
-parsePartNumbersFromRows input =
-    let
-        rows =
-            String.lines input
-                |> List.indexedMap parseRow
-
-        ( allPartNumbers, allSymbols ) =
-            List.foldl
-                (\row ( parts, syms ) ->
-                    ( parts ++ row.partNumbers
-                    , syms ++ row.symbols
-                    )
-                )
-                ( [], [] )
-                rows
-
-        validPartNumbers =
-            List.filter
-                (\partNumber ->
-                    List.any
-                        (\symbol ->
-                            if numberNextToSymbol partNumber symbol then
-                                True
-
-                            else
-                                False
-                        )
-                        allSymbols
-                )
-                allPartNumbers
-
-        validPartNumbers2 =
-            filterValidPartNumber
-                allSymbols
-                allPartNumbers
-
-        _ =
-            Debug.log "validPartNumbers" (validPartNumbers |> List.map .value)
-
-        _ =
-            Debug.log "validPartNumbers2" (validPartNumbers2 |> List.map .value)
-
-        validValues =
-            List.map .value validPartNumbers2
-
-        allValues =
-            List.map .value allPartNumbers
-
-        rogueNumbers =
-            allValues
-                |> List.filter
-                    (\value ->
-                        List.member value validValues == False
-                    )
-
-        -- _ =
-        --     Debug.log "validValues" validValues
-        -- _ =
-        --     Debug.log "rogueNumbers" rogueNumbers
-    in
-    { partNumbers = validPartNumbers2
-    , rogueNumbers = rogueNumbers
-    }
-
-
-filterValidPartNumber : List Symbol -> List PartNumber -> List PartNumber
-filterValidPartNumber symbols partNumbers =
-    let
-        mainCache =
-            Set.empty
-    in
-    List.foldl
-        (\partNumber ( matchingParts, topCache ) ->
-            let
-                ( nextTo, updatedCache ) =
-                    filterPartNumbersNextToSymbol
-                        symbols
-                        partNumber
-                        topCache
-            in
-            if nextTo == True then
-                ( matchingParts ++ [ partNumber ], updatedCache )
-
-            else
-                ( matchingParts, updatedCache )
-        )
-        ( [], mainCache )
-        partNumbers
-        |> Tuple.first
-
-
-filterPartNumbersNextToSymbol : List Symbol -> PartNumber -> Set Int -> ( Bool, Set Int )
-filterPartNumbersNextToSymbol symbols partNumber startingCache =
-    stoppableFoldl
-        (\currentSymbol ( _, currentCache ) ->
-            let
-                ( nextTo, updatedCache ) =
-                    numberNextToSymbolCached partNumber currentSymbol currentCache
-            in
-            if nextTo == True then
-                Stop ( True, updatedCache )
-
-            else
-                Continue ( False, updatedCache )
-        )
-        ( False, startingCache )
-        symbols
-
-
-type alias PartNumbersFromRows =
-    { partNumbers : List PartNumber
-    , rogueNumbers : List Int
-    }
-
-
-numberNextToSymbol : PartNumber -> Symbol -> Bool
-numberNextToSymbol partNumber symbol =
-    let
-        atLeastOneIsNearby =
-            List.range partNumber.startIndex partNumber.endIndex
-                |> List.map
-                    (\x ->
-                        distance ( x, partNumber.rowIndex ) ( symbol.index, symbol.rowIndex )
-                    )
-                |> List.filter
-                    (\value ->
-                        value == 1
-                    )
-                |> List.length
-                |> (\length ->
-                        length > 0
-                   )
-    in
-    atLeastOneIsNearby
-
-
-numberNextToSymbolCached : PartNumber -> Symbol -> Set Int -> ( Bool, Set Int )
-numberNextToSymbolCached partNumber symbol cache =
-    if Set.member partNumber.value cache then
-        ( True, cache )
-
-    else
-        let
-            nextTo =
-                numberNextToSymbol partNumber symbol
-        in
-        if nextTo == True then
-            ( True, Set.insert partNumber.value cache )
-
-        else
-            ( False, cache )
-
-
-distance : ( Int, Int ) -> ( Int, Int ) -> Int
-distance ( x1, y1 ) ( x2, y2 ) =
-    ((x2 - x1) ^ 2 + (y2 - y1) ^ 2)
-        |> toFloat
-        |> sqrt
-        |> round
+parseRows : String -> List Row
+parseRows input =
+    [ { rowIndex = 0
+      , partNumbers =
+            [ { startRowIndex = 0, endRowIndex = 0, startIndex = 0, endIndex = 2, value = 467 }
+            , { startRowIndex = 0, endRowIndex = 0, startIndex = 5, endIndex = 7, value = 114 }
+            ]
+      , symbols =
+            []
+      }
+    , { rowIndex = 1
+      , partNumbers =
+            []
+      , symbols =
+            [ { rowIndex = 0, index = 3, value = '*' } ]
+      }
+    ]
 
 
 
+-- parsePartNumbers : String -> List Row
+-- parsePartNumbers input =
+--     let
+--         -- columnLenth =
+--         --     String.indexes "\n" input
+--         --     |> List.head
+--         --     |> Maybe.withDefault 0
+--         rows =
+--             []
+--         _ =
+--             Debug.log "rows" rows
+--     in
+-- [ { rowIndex = 0
+--   , partNumbers =
+--         [ { startRowIndex = 0, endRowIndex = 0, startIndex = 0, endIndex = 2, value = 467 }
+--         , { startRowIndex = 0, endRowIndex = 0, startIndex = 5, endIndex = 7, value = 114 }
+--         ]
+--   , symbols =
+--         []
+--   }
+-- , { rowIndex = 1
+--   , partNumbers =
+--         []
+--   , symbols =
+--         [ { rowIndex = 0, index = 3, value = '*' } ]
+--   }
+-- ]
+-- parsePartNumbersFromRows : String -> PartNumbersFromRows
+-- parsePartNumbersFromRows input =
+--     let
+--         rows =
+--             [ { partNumbers = [], symbols = [], rowIndex = 0 } ]
+--         ( allPartNumbers, allSymbols ) =
+--             List.foldl
+--                 (\row ( parts, syms ) ->
+--                     ( parts ++ row.partNumbers
+--                     , syms ++ row.symbols
+--                     )
+--                 )
+--                 ( [], [] )
+--                 rows
+--         validPartNumbers =
+--             List.filter
+--                 (\partNumber ->
+--                     List.any
+--                         (\symbol ->
+--                             if numberNextToSymbol partNumber symbol then
+--                                 True
+--                             else
+--                                 False
+--                         )
+--                         allSymbols
+--                 )
+--                 allPartNumbers
+--         validPartNumbers2 =
+--             filterValidPartNumber
+--                 allSymbols
+--                 allPartNumbers
+--         _ =
+--             Debug.log "validPartNumbers" (validPartNumbers |> List.map .value)
+--         _ =
+--             Debug.log "validPartNumbers2" (validPartNumbers2 |> List.map .value)
+--         validValues =
+--             List.map .value validPartNumbers2
+--         allValues =
+--             List.map .value allPartNumbers
+--         rogueNumbers =
+--             allValues
+--                 |> List.filter
+--                     (\value ->
+--                         List.member value validValues == False
+--                     )
+--         -- _ =
+--         --     Debug.log "validValues" validValues
+--         -- _ =
+--         --     Debug.log "rogueNumbers" rogueNumbers
+--     in
+--     { partNumbers = validPartNumbers2
+--     , rogueNumbers = rogueNumbers
+--     }
+-- filterValidPartNumber : List Symbol -> List PartNumber -> List PartNumber
+-- filterValidPartNumber symbols partNumbers =
+--     let
+--         mainCache =
+--             Set.empty
+--     in
+--     List.foldl
+--         (\partNumber ( matchingParts, topCache ) ->
+--             let
+--                 ( nextTo, updatedCache ) =
+--                     filterPartNumbersNextToSymbol
+--                         symbols
+--                         partNumber
+--                         topCache
+--             in
+--             if nextTo == True then
+--                 ( matchingParts ++ [ partNumber ], updatedCache )
+--             else
+--                 ( matchingParts, updatedCache )
+--         )
+--         ( [], mainCache )
+--         partNumbers
+--         |> Tuple.first
+-- filterPartNumbersNextToSymbol : List Symbol -> PartNumber -> Set Int -> ( Bool, Set Int )
+-- filterPartNumbersNextToSymbol symbols partNumber startingCache =
+--     stoppableFoldl
+--         (\currentSymbol ( _, currentCache ) ->
+--             let
+--                 ( nextTo, updatedCache ) =
+--                     numberNextToSymbolCached partNumber currentSymbol currentCache
+--             in
+--             if nextTo == True then
+--                 Stop ( True, updatedCache )
+--             else
+--                 Continue ( False, updatedCache )
+--         )
+--         ( False, startingCache )
+--         symbols
+-- type alias PartNumbersFromRows =
+--     { partNumbers : List PartNumber
+--     , rogueNumbers : List Int
+--     }
+-- -- numberNextToSymbol : PartNumber -> Symbol -> Bool
+-- -- numberNextToSymbol partNumber symbol =
+-- --     let
+-- --         atLeastOneIsNearby =
+-- --             List.range partNumber.startIndex partNumber.endIndex
+-- --                 |> List.map
+-- --                     (\x ->
+-- --                         distance ( x, partNumber.rowStartIndex ) ( symbol.index, symbol.rowStartIndex )
+-- --                     )
+-- --                 |> List.filter
+-- --                     (\value ->
+-- --                         value == 1
+-- --                     )
+-- --                 |> List.length
+-- --                 |> (\length ->
+-- --                         length > 0
+-- --                    )
+-- --     in
+-- --     atLeastOneIsNearby
+-- numberNextToSymbolCached : PartNumber -> Symbol -> Set Int -> ( Bool, Set Int )
+-- numberNextToSymbolCached partNumber symbol cache =
+--     if Set.member partNumber.value cache then
+--         ( True, cache )
+--     else
+--         let
+--             nextTo =
+--                 numberNextToSymbol partNumber symbol
+--         in
+--         if nextTo == True then
+--             ( True, Set.insert partNumber.value cache )
+--         else
+--             ( False, cache )
+-- distance : ( Int, Int ) -> ( Int, Int ) -> Int
+-- distance ( x1, y1 ) ( x2, y2 ) =
+--     ((x2 - x1) ^ 2 + (y2 - y1) ^ 2)
+--         |> toFloat
+--         |> sqrt
+--         |> round
 -- Day 3, Part 1
 -- Attempt 1: 281663... Wrong, too low.
 -- Attmept 2: 548403... I was using the Day 1 puzzle input, whoops. However, still wrong and too low.
@@ -278,14 +216,12 @@ distance ( x1, y1 ) ( x2, y2 ) =
 -- I supposed that does NOT make it invalid suddenly, so it should be kept... meaning, if I find the number
 -- again, I need to include it anyway to ensure the sum is correct. The requirements didn't say you could
 -- have multiple of the same Part Number, but here we are.
-
-
-sumPartNumbers : String -> Int
-sumPartNumbers input =
-    parsePartNumbersFromRows input
-        |> .partNumbers
-        |> List.map .value
-        |> List.sum
+-- sumPartNumbers : String -> Int
+-- sumPartNumbers input =
+--     parsePartNumbersFromRows input
+--         |> .partNumbers
+--         |> List.map .value
+--         |> List.sum
 
 
 sampleInput : String
