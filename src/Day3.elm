@@ -25,14 +25,12 @@ type alias Symbol =
 parseRows : String -> ( List PartNumber, List Symbol, Int )
 parseRows input =
     let
-        newLineIndexOffset : Bool -> Int
-        newLineIndexOffset hasNewLine =
-            if hasNewLine then
-                1
-
-            else
-                0
-
+        -- newLineIndexOffset : Bool -> Int
+        -- newLineIndexOffset hasNewLine =
+        --     if hasNewLine then
+        --         1
+        --     else
+        --         0
         getColumnSize : Bool -> Int -> Int -> Int
         getColumnSize columnSizeMade currentColumnSize index =
             if columnSizeMade == True then
@@ -139,9 +137,8 @@ parseRows input =
                         ( parsedRows.parts, parsedRows.syms, parsedRows.columnSize )
                    )
 
-        _ =
-            Debug.log "partNumbers" (partNumbers |> List.map .value)
-
+        -- _ =
+        --     Debug.log "partNumbers" (partNumbers |> List.map .value)
         -- _ =
         --     Debug.log "symbols" symbols
     in
@@ -154,18 +151,16 @@ parsePartNumbersFromRows input =
         ( allPartNumbers, allSymbols, columnSize ) =
             parseRows input
 
-        _ =
-            Debug.log "1 allPartNumbers" allPartNumbers
-
+        -- _ =
+        --     Debug.log "1 allPartNumbers" allPartNumbers
         validPartNumbers2 =
             filterValidPartNumber
                 columnSize
                 allSymbols
                 allPartNumbers
 
-        _ =
-            Debug.log "2 validPartNumbers2" (validPartNumbers2 |> List.map .value)
-
+        -- _ =
+        --     Debug.log "2 validPartNumbers2" (validPartNumbers2 |> List.map .value)
         validValues =
             List.map .value validPartNumbers2
 
@@ -249,16 +244,6 @@ numberNextToSymbol columnSize partNumber symbol =
                     (\index range ->
                         List.map
                             (\x ->
-                                let
-                                    _ =
-                                        Debug.log "part, symbol" (String.fromInt partNumber.value ++ ", " ++ String.fromChar symbol.value)
-
-                                    _ =
-                                        Debug.log "range" range
-
-                                    _ =
-                                        Debug.log "symbol" symbol
-                                in
                                 distance ( x, partNumber.startRowIndex + index ) ( symbol.index, symbol.rowIndex )
                             )
                             range
@@ -273,9 +258,6 @@ numberNextToSymbol columnSize partNumber symbol =
                     )
                 |> List.any
                     (\bool -> bool == True)
-
-        _ =
-            Debug.log "atLeastOneIsNearby2" atLeastOneIsNearby2
     in
     atLeastOneIsNearby2
 
@@ -332,6 +314,11 @@ sumPartNumbers input =
         |> .partNumbers
         |> List.map .value
         |> List.sum
+
+
+day3Part1 : Int
+day3Part1 =
+    sumPartNumbers puzzleInputDay3
 
 
 sampleInput : String

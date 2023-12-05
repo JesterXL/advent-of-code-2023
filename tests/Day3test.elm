@@ -1,8 +1,7 @@
 module Day3test exposing (..)
 
 import Array exposing (Array)
-import Day1 exposing (puzzleInput)
-import Day3 exposing (filterValidPartNumber, inputAcrossLines, numberNextToSymbol, numberNextToSymbolCached, parseRows, sampleInput, sampleInputWithDupes, sumPartNumbers)
+import Day3 exposing (day3Part1, filterValidPartNumber, inputAcrossLines, numberNextToSymbol, numberNextToSymbolCached, parsePartNumbersFromRows, parseRows, puzzleInputDay3, sampleInput, sampleInputWithDupes, sumPartNumbers)
 import Expect exposing (Expectation)
 import Fuzz exposing (Fuzzer, floatRange, int, list, string)
 import Set
@@ -38,6 +37,9 @@ parseRowsSuite =
                 let
                     ( partNumbers, _, _ ) =
                         parseRows inputAcrossLines
+
+                    _ =
+                        Debug.log "wat" (partNumbers |> List.map .value)
                 in
                 Expect.equal (List.length partNumbers) 5
         , test "should measure columnSize correctly for 1 row" <|
@@ -269,48 +271,51 @@ parseRowsSuite =
 --                     in
 --                     Expect.equal (List.length rows) 2
 --         ]
--- parsePartNumbersFromRowsSuite : Test
--- parsePartNumbersFromRowsSuite =
---     describe "parsePartNumbersFromRows"
---         [ test "should get 2 outliers" <|
---             \_ ->
---                 let
---                     partNumbersFromRows =
---                         parsePartNumbersFromRows
---                             sampleInput
---                 in
---                 Expect.equal (List.length partNumbersFromRows.rogueNumbers) 2
---         , test "should get 8 part numbers out of 10 numbers" <|
---             \_ ->
---                 let
---                     partNumbersFromRows =
---                         parsePartNumbersFromRows
---                             sampleInput
---                     _ =
---                         Debug.log "partNumbersFromRows" (partNumbersFromRows |> .partNumbers |> List.map .value)
---                 in
---                 Expect.equal (List.length partNumbersFromRows.partNumbers) 8
---         , test "should not contain 114" <|
---             \_ ->
---                 let
---                     partNumbers =
---                         sampleInput
---                             |> parsePartNumbersFromRows
---                             |> .partNumbers
---                             |> List.map .value
---                 in
---                 Expect.equal (List.member 114 partNumbers) False
---         , test "should not contain 58" <|
---             \_ ->
---                 let
---                     partNumbers =
---                         sampleInput
---                             |> parsePartNumbersFromRows
---                             |> .partNumbers
---                             |> List.map .value
---                 in
---                 Expect.equal (List.member 58 partNumbers) False
---         ]
+
+
+parsePartNumbersFromRowsSuite : Test
+parsePartNumbersFromRowsSuite =
+    describe "parsePartNumbersFromRows"
+        [ test "should get 2 outliers" <|
+            \_ ->
+                let
+                    partNumbersFromRows =
+                        parsePartNumbersFromRows
+                            sampleInput
+                in
+                Expect.equal (List.length partNumbersFromRows.rogueNumbers) 2
+        , test "should get 8 part numbers out of 10 numbers" <|
+            \_ ->
+                let
+                    partNumbersFromRows =
+                        parsePartNumbersFromRows
+                            sampleInput
+
+                    _ =
+                        Debug.log "partNumbersFromRows" (partNumbersFromRows |> .partNumbers |> List.map .value)
+                in
+                Expect.equal (List.length partNumbersFromRows.partNumbers) 8
+        , test "should not contain 114" <|
+            \_ ->
+                let
+                    partNumbers =
+                        sampleInput
+                            |> parsePartNumbersFromRows
+                            |> .partNumbers
+                            |> List.map .value
+                in
+                Expect.equal (List.member 114 partNumbers) False
+        , test "should not contain 58" <|
+            \_ ->
+                let
+                    partNumbers =
+                        sampleInput
+                            |> parsePartNumbersFromRows
+                            |> .partNumbers
+                            |> List.map .value
+                in
+                Expect.equal (List.member 58 partNumbers) False
+        ]
 
 
 numberNextToSymbolSuite : Test
@@ -336,78 +341,85 @@ numberNextToSymbolSuite =
                             }
                 in
                 Expect.equal nextTo True
-
-        -- , test "should not find a symbol next to 114" <|
-        --     \_ ->
-        --         let
-        --             -- 467..114..
-        --             -- ...*......
-        --             nextTo =
-        --                 numberNextToSymbol
-        --                     { rowIndex = 0
-        --                     , startIndex = 5
-        --                     , endIndex = 7
-        --                     , value = 114
-        --                     }
-        --                     { rowIndex = 1
-        --                     , index = 3
-        --                     , value = '*'
-        --                     }
-        --         in
-        --         Expect.equal nextTo False
-        -- , test "should find symbol top right" <|
-        --     \_ ->
-        --         let
-        --             -- ...*......
-        --             -- ..35..633.
-        --             nextTo =
-        --                 numberNextToSymbol
-        --                     { rowIndex = 1
-        --                     , startIndex = 2
-        --                     , endIndex = 3
-        --                     , value = 35
-        --                     }
-        --                     { rowIndex = 0
-        --                     , index = 3
-        --                     , value = '*'
-        --                     }
-        --         in
-        --         Expect.equal nextTo True
-        -- , test "should not find symbol top left" <|
-        --     \_ ->
-        --         let
-        --             -- ...*......
-        --             -- ..35..633.
-        --             nextTo =
-        --                 numberNextToSymbol
-        --                     { rowIndex = 1
-        --                     , startIndex = 6
-        --                     , endIndex = 8
-        --                     , value = 633
-        --                     }
-        --                     { rowIndex = 0
-        --                     , index = 3
-        --                     , value = '*'
-        --                     }
-        --         in
-        --         Expect.equal nextTo False
-        -- , test "should find a symbol to the right" <|
-        --     \_ ->
-        --         let
-        --             -- 617*......
-        --             nextTo =
-        --                 numberNextToSymbol
-        --                     { rowIndex = 1
-        --                     , startIndex = 0
-        --                     , endIndex = 2
-        --                     , value = 617
-        --                     }
-        --                     { rowIndex = 1
-        --                     , index = 3
-        --                     , value = '*'
-        --                     }
-        --         in
-        --         Expect.equal nextTo True
+        , test "should not find a symbol next to 114" <|
+            \_ ->
+                let
+                    -- 467..114..
+                    -- ...*......
+                    nextTo =
+                        numberNextToSymbol
+                            10
+                            { startRowIndex = 0
+                            , endRowIndex = 0
+                            , startIndex = 5
+                            , endIndex = 7
+                            , value = 114
+                            }
+                            { rowIndex = 1
+                            , index = 3
+                            , value = '*'
+                            }
+                in
+                Expect.equal nextTo False
+        , test "should find symbol top right" <|
+            \_ ->
+                let
+                    -- ...*......
+                    -- ..35..633.
+                    nextTo =
+                        numberNextToSymbol
+                            10
+                            { startRowIndex = 0
+                            , endRowIndex = 0
+                            , startIndex = 2
+                            , endIndex = 3
+                            , value = 35
+                            }
+                            { rowIndex = 0
+                            , index = 3
+                            , value = '*'
+                            }
+                in
+                Expect.equal nextTo True
+        , test "should not find symbol top left" <|
+            \_ ->
+                let
+                    -- ...*......
+                    -- ..35..633.
+                    nextTo =
+                        numberNextToSymbol
+                            10
+                            { startRowIndex = 0
+                            , endRowIndex = 0
+                            , startIndex = 6
+                            , endIndex = 8
+                            , value = 633
+                            }
+                            { rowIndex = 0
+                            , index = 3
+                            , value = '*'
+                            }
+                in
+                Expect.equal nextTo False
+        , test "should find a symbol to the right" <|
+            \_ ->
+                let
+                    -- 617*......
+                    nextTo =
+                        numberNextToSymbol
+                            10
+                            { startRowIndex = 0
+                            , endRowIndex = 0
+                            , startIndex = 0
+                            , endIndex = 2
+                            , value = 617
+                            }
+                            { rowIndex = 1
+                            , index = 3
+                            , value = '*'
+                            }
+                in
+                Expect.equal nextTo True
         , test "numberNextToSymbolCached - should work like before" <|
             \_ ->
                 let
@@ -502,9 +514,6 @@ filterValidPartNumberSuite =
                             |> Array.get 0
                             |> Maybe.withDefault
                                 { startRowIndex = 0, endRowIndex = 0, startIndex = 0, endIndex = 0, value = 0 }
-
-                    _ =
-                        Debug.log "dude" validPartNumberList
                 in
                 Expect.equal validPartNumber.value 617
         ]
@@ -516,13 +525,21 @@ day3Suite =
         [ test "day3Part1 should work with sample" <|
             \_ ->
                 Expect.equal (sumPartNumbers sampleInput) 4361
+        , test "day3Part1 should work with dupes" <|
+            \_ ->
+                Expect.equal (sumPartNumbers sampleInputWithDupes) 4828
+        , test "day3Part1 should work with inputAcrossLines" <|
+            \_ ->
+                Expect.equal (sumPartNumbers inputAcrossLines) 502
+        , test "day3Part1 should work with puzzle input" <|
+            \_ ->
+                -- Expect.equal (sumPartNumbers puzzleInput) 281663 -- Wrong, too low
+                -- Expect.equal (sumPartNumbers puzzleInputDay3) 548402
+                -- Expect.equal (sumPartNumbers puzzleInput) 573992
+                Expect.equal (sumPartNumbers puzzleInputDay3) 1408110
 
-        -- , test "day3Part1 should work with puzzle input" <|
-        --     \_ ->
-        --         -- Expect.equal (sumPartNumbers puzzleInput) 281663 -- Wrong, too low
-        --         -- Expect.equal (sumPartNumbers puzzleInputDay3) 548402
-        --         -- Expect.equal (sumPartNumbers puzzleInput) 573992
         -- 281663 -- somehow I'm now getting this... what
         -- Expect.equal (sumPartNumbers largeSampleDay3) 1000
         -- Wrong, too low
+        -- 1408110... wrong... I think I'm defeated, man...
         ]
