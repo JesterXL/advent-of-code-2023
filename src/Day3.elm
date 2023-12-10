@@ -8,7 +8,6 @@ import Set exposing (Set)
 
 type alias PartNumber =
     { startRowIndex : Int
-    , endRowIndex : Int
     , startIndex : Int
     , endIndex : Int
     , value : Int
@@ -22,167 +21,137 @@ type alias Symbol =
     }
 
 
-parseRows : String -> ( List PartNumber, List Symbol, Int )
+parseRows : String -> ( List PartNumber, List Symbol )
 parseRows input =
     let
-        -- newLineIndexOffset : Bool -> Int
-        -- newLineIndexOffset hasNewLine =
-        --     if hasNewLine then
-        --         1
-        --     else
-        --         0
-        getColumnSize : Bool -> Int -> Int -> Int
-        getColumnSize columnSizeMade currentColumnSize index =
-            if columnSizeMade == True then
-                currentColumnSize
-
-            else
-                index
-
-        ( partNumbers, symbols, columnSize ) =
+        ( partNumbers, symbols ) =
             input
-                |> String.toList
-                |> indexedFoldl
-                    (\index char acc ->
-                        -- let
-                        --     _ =
-                        --         Debug.log "char" char
-                        -- in
-                        if isDigit char == True then
-                            if acc.tracking == True then
-                                { acc
-                                    | digits = acc.digits ++ [ char ]
-                                }
-
-                            else
-                                { acc
-                                    | tracking = True
-                                    , digits = [ char ]
-                                    , startRowIndex = acc.rowIndex
-                                    , startIndex = (index - acc.totalNewLines) - (acc.columnSize * acc.rowIndex)
-                                    , newLine = False
-                                }
-
-                        else if char == '\n' then
-                            if acc.tracking == True then
-                                { acc
-                                    | newLine = True
-                                    , rowIndex = acc.rowIndex + 1
-                                    , totalNewLines = acc.totalNewLines + 1
-                                    , columnSizeMade = True
-                                    , columnSize = getColumnSize acc.columnSizeMade acc.columnSize index
-                                }
-
-                            else
-                                { acc
-                                    | rowIndex = acc.rowIndex + 1
-                                    , totalNewLines = acc.totalNewLines + 1
-                                    , columnSizeMade = True
-                                    , columnSize = getColumnSize acc.columnSizeMade acc.columnSize index
-                                }
-
-                        else if char == '.' then
-                            if acc.tracking == True then
-                                -- let
-                                --     _ =
-                                --         Debug.log "tracked" acc.digits
-                                --     _ =
-                                --         Debug.log "dat value" (String.fromList acc.digits |> String.toInt |> Maybe.withDefault 0)
-                                -- in
-                                { acc
-                                    | tracking = False
-                                    , parts =
-                                        acc.parts
-                                            ++ [ { startRowIndex = acc.startRowIndex
-                                                 , endRowIndex = acc.rowIndex
-                                                 , startIndex = acc.startIndex
-                                                 , endIndex = (index - 1 - acc.totalNewLines) - (acc.columnSize * acc.rowIndex)
-                                                 , value = String.fromList acc.digits |> String.toInt |> Maybe.withDefault 0
-                                                 }
-                                               ]
-                                }
-
-                            else
-                                acc
-
-                        else if acc.tracking == True then
-                            -- let
-                            --     _ =
-                            --         Debug.log "syms 1" char
-                            -- in
-                            { acc
-                                | tracking = False
-                                , parts =
-                                    acc.parts
-                                        ++ [ { startRowIndex = acc.startRowIndex
-                                             , endRowIndex = acc.rowIndex
-                                             , startIndex = acc.startIndex
-                                             , endIndex = (index - 1 - acc.totalNewLines) - (acc.columnSize * acc.rowIndex)
-                                             , value = String.fromList acc.digits |> String.toInt |> Maybe.withDefault 0
-                                             }
-                                           ]
-
-                                -- (index - acc.totalNewLines) - (acc.columnSize * acc.rowIndex)
-                                , syms =
-                                    acc.syms
-                                        ++ [ { rowIndex = acc.rowIndex, index = index - acc.totalNewLines - (acc.columnSize * acc.rowIndex), value = char } ]
-                            }
-
-                        else
-                            -- let
-                            --     _ =
-                            --         Debug.log "syms 2" char
-                            -- in
-                            { acc
-                                | syms =
-                                    acc.syms
-                                        ++ [ { rowIndex = acc.rowIndex, index = index - acc.totalNewLines - (acc.columnSize * acc.rowIndex), value = char } ]
-                            }
+                |> String.lines
+                |> List.map String.toList
+                |> List.map
+                    (\chars ->
+                        chars ++ [ '.' ]
                     )
-                    { tracking = False
-                    , digits = []
-                    , parts = []
-                    , syms = []
-                    , newLine = False
-                    , startRowIndex = -1
-                    , startIndex = -1
-                    , rowIndex = 0
-                    , columnSize = 1
-                    , columnSizeMade = False
-                    , totalNewLines = 0
-                    }
-                |> (\parsedRows ->
-                        ( parsedRows.parts, parsedRows.syms, parsedRows.columnSize )
-                   )
+                |> List.indexedMap
+                    (\rowIndex charList ->
+                        charList
+                            |> indexedFoldl
+                                (\index char acc ->
+                                    -- let
+                                    --     _ =
+                                    --         Debug.log "char" char
+                                    -- in
+                                    if isDigit char == True then
+                                        if acc.tracking == True then
+                                            { acc
+                                                | digits = acc.digits ++ [ char ]
+                                            }
+
+                                        else
+                                            { acc
+                                                | tracking = True
+                                                , digits = [ char ]
+                                                , startRowIndex = rowIndex
+                                                , startIndex = index
+                                            }
+
+                                    else if char == '.' then
+                                        if acc.tracking == True then
+                                            -- let
+                                            --     _ =
+                                            --         Debug.log "tracked" acc.digits
+                                            --     _ =
+                                            --         Debug.log "dat value" (String.fromList acc.digits |> String.toInt |> Maybe.withDefault 0)
+                                            -- in
+                                            { acc
+                                                | tracking = False
+                                                , parts =
+                                                    acc.parts
+                                                        ++ [ { startRowIndex = rowIndex
+                                                             , startIndex = acc.startIndex
+                                                             , endIndex = index - 1
+                                                             , value = String.fromList acc.digits |> String.toInt |> Maybe.withDefault 0
+                                                             }
+                                                           ]
+                                            }
+
+                                        else
+                                            acc
+
+                                    else if acc.tracking == True then
+                                        -- let
+                                        --     _ =
+                                        --         Debug.log "syms 1" char
+                                        -- in
+                                        { acc
+                                            | tracking = False
+                                            , parts =
+                                                acc.parts
+                                                    ++ [ { startRowIndex = rowIndex
+                                                         , startIndex = acc.startIndex
+                                                         , endIndex = index - 1
+                                                         , value = String.fromList acc.digits |> String.toInt |> Maybe.withDefault 0
+                                                         }
+                                                       ]
+                                            , syms =
+                                                acc.syms
+                                                    ++ [ { rowIndex = rowIndex, index = index, value = char } ]
+                                        }
+
+                                    else
+                                        -- let
+                                        --     _ =
+                                        --         Debug.log "syms 2" char
+                                        -- in
+                                        { acc
+                                            | syms =
+                                                acc.syms
+                                                    ++ [ { rowIndex = rowIndex, index = index, value = char } ]
+                                        }
+                                )
+                                { tracking = False
+                                , digits = []
+                                , parts = []
+                                , syms = []
+                                , startRowIndex = -1
+                                , startIndex = -1
+                                }
+                            |> (\parsedRows ->
+                                    ( parsedRows.parts, parsedRows.syms )
+                               )
+                    )
+                |> List.foldl
+                    (\( parts, syms ) ( accParts, accSyms ) ->
+                        ( accParts ++ parts, accSyms ++ syms )
+                    )
+                    ( [], [] )
 
         -- _ =
         --     Debug.log "partNumbers" (partNumbers |> List.map .value)
         -- _ =
         --     Debug.log "symbols" symbols
     in
-    ( partNumbers, symbols, columnSize )
+    ( partNumbers, symbols )
 
 
 parsePartNumbersFromRows : String -> PartNumbersFromRows
 parsePartNumbersFromRows input =
     let
-        ( allPartNumbers, allSymbols, columnSize ) =
+        ( allPartNumbers, allSymbols ) =
             parseRows input
 
         -- _ =
-        --     Debug.log "1 allPartNumbers" allPartNumbers
+        --     Debug.log "1 allPartNumbers" (allPartNumbers |> List.map .value)
         validPartNumbers2 =
             filterValidPartNumber
-                columnSize
                 allSymbols
                 allPartNumbers
 
         html =
             linesAndPartNumbersToHTML allPartNumbers validPartNumbers2 (String.lines input)
 
-        _ =
-            Debug.log "html" html
-
+        -- _ =
+        --     Debug.log "html" html
         -- _ =
         --     Debug.log "2 validPartNumbers2" (validPartNumbers2 |> List.map .value)
         validValues =
@@ -251,10 +220,10 @@ linesAndPartNumbersToHTML allPartNumbers validPartNumbers lines =
                 |> List.foldl
                     (\part acc ->
                         if isRoguePart part == True then
-                            let
-                                _ =
-                                    Debug.log "part.value" part.value
-                            in
+                            -- let
+                            --     _ =
+                            --         Debug.log "part.value" part.value
+                            -- in
                             getLine
                                 part.startRowIndex
                                 acc
@@ -286,14 +255,13 @@ linesAndPartNumbersToHTML allPartNumbers validPartNumbers lines =
     htmlPage
 
 
-filterValidPartNumber : Int -> List Symbol -> List PartNumber -> List PartNumber
-filterValidPartNumber columnSize symbols partNumbers =
+filterValidPartNumber : List Symbol -> List PartNumber -> List PartNumber
+filterValidPartNumber symbols partNumbers =
     List.foldl
         (\partNumber ( matchingParts, topCache ) ->
             let
                 ( nextTo, updatedCache ) =
                     filterPartNumbersNextToSymbol
-                        columnSize
                         symbols
                         partNumber
                         topCache
@@ -309,13 +277,13 @@ filterValidPartNumber columnSize symbols partNumbers =
         |> Tuple.first
 
 
-filterPartNumbersNextToSymbol : Int -> List Symbol -> PartNumber -> Set Int -> ( Bool, Set Int )
-filterPartNumbersNextToSymbol columnSize symbols partNumber startingCache =
+filterPartNumbersNextToSymbol : List Symbol -> PartNumber -> Set Int -> ( Bool, Set Int )
+filterPartNumbersNextToSymbol symbols partNumber startingCache =
     stoppableFoldl
         (\currentSymbol ( _, currentCache ) ->
             let
                 ( nextTo, updatedCache ) =
-                    numberNextToSymbolCached columnSize partNumber currentSymbol currentCache
+                    numberNextToSymbolCached partNumber currentSymbol currentCache
             in
             if nextTo == True then
                 Stop ( True, updatedCache )
@@ -333,15 +301,35 @@ type alias PartNumbersFromRows =
     }
 
 
-numberNextToSymbol : Int -> PartNumber -> Symbol -> Bool
-numberNextToSymbol columnSize partNumber symbol =
+numberNextToSymbol : PartNumber -> Symbol -> Bool
+numberNextToSymbol partNumber symbol =
     let
         atLeastOneIsNearby2 =
-            getRangeFromPartNumber columnSize partNumber
+            getRangeFromPartNumber partNumber
                 |> List.indexedMap
                     (\index range ->
                         List.map
                             (\x ->
+                                -- let
+                                --     dist =
+                                --         distance ( x, partNumber.startRowIndex + index ) ( symbol.index, symbol.rowIndex )
+                                --     _ =
+                                --         Debug.log "x1"
+                                --             (String.fromInt x
+                                --                 ++ ", y1: "
+                                --                 ++ String.fromInt (partNumber.startRowIndex + index)
+                                --                 ++ ", x2: "
+                                --                 ++ String.fromInt symbol.index
+                                --                 ++ ", y2: "
+                                --                 ++ String.fromInt symbol.rowIndex
+                                --                 ++ ", part: "
+                                --                 ++ String.fromInt partNumber.value
+                                --                 ++ ", symbol: "
+                                --                 ++ String.fromChar symbol.value
+                                --                 ++ ", distance: "
+                                --                 ++ String.fromInt dist
+                                --             )
+                                -- in
                                 distance ( x, partNumber.startRowIndex + index ) ( symbol.index, symbol.rowIndex )
                             )
                             range
@@ -360,26 +348,20 @@ numberNextToSymbol columnSize partNumber symbol =
     atLeastOneIsNearby2
 
 
-getRangeFromPartNumber : Int -> PartNumber -> List (List Int)
-getRangeFromPartNumber columnSize partNumber =
-    if partNumber.startRowIndex == partNumber.endRowIndex then
-        [ List.range partNumber.startIndex partNumber.endIndex ]
-
-    else
-        [ List.range partNumber.startIndex (columnSize - 1)
-        , List.range 0 partNumber.endIndex
-        ]
+getRangeFromPartNumber : PartNumber -> List (List Int)
+getRangeFromPartNumber partNumber =
+    [ List.range partNumber.startIndex partNumber.endIndex ]
 
 
-numberNextToSymbolCached : Int -> PartNumber -> Symbol -> Set Int -> ( Bool, Set Int )
-numberNextToSymbolCached columnSize partNumber symbol cache =
+numberNextToSymbolCached : PartNumber -> Symbol -> Set Int -> ( Bool, Set Int )
+numberNextToSymbolCached partNumber symbol cache =
     if Set.member partNumber.value cache then
         ( True, cache )
 
     else
         let
             nextTo =
-                numberNextToSymbol columnSize partNumber symbol
+                numberNextToSymbol partNumber symbol
         in
         if nextTo == True then
             ( True, Set.insert partNumber.value cache )

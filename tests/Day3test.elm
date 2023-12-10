@@ -14,99 +14,91 @@ parseRowsSuite =
         [ test "should get a list of part numbers" <|
             \_ ->
                 let
-                    ( partNumbers, _, _ ) =
+                    ( partNumbers, _ ) =
                         parseRows "467..114.."
                 in
                 Expect.equal (List.length partNumbers) 2
         , test "should get a list of part numbers across many lines" <|
             \_ ->
                 let
-                    ( partNumbers, _, _ ) =
+                    ( partNumbers, _ ) =
                         parseRows sampleInput
                 in
                 Expect.equal (List.length partNumbers) 10
         , test "should get a list of part numbers with dupes" <|
             \_ ->
                 let
-                    ( partNumbers, _, _ ) =
+                    ( partNumbers, _ ) =
                         parseRows sampleInputWithDupes
                 in
                 Expect.equal (List.length partNumbers) 10
         , test "should get a list of part numbers across newlines" <|
             \_ ->
                 let
-                    ( partNumbers, _, _ ) =
+                    ( partNumbers, _ ) =
                         parseRows inputAcrossLines
                 in
-                Expect.equal (List.length partNumbers) 5
-        , test "should measure columnSize correctly for 1 row" <|
-            \_ ->
-                let
-                    ( _, _, columnSize ) =
-                        parseRows """123....32..
-"""
-                in
-                Expect.equal columnSize 11
+                Expect.equal (List.length partNumbers) 6
         , test "should correctly parse sample input - 1st number startIndex legit" <|
             \_ ->
                 let
-                    ( partNumbers, _, _ ) =
+                    ( partNumbers, _ ) =
                         parseRows inputAcrossLines
 
                     startIndex =
                         partNumbers
                             |> Array.fromList
                             |> Array.get 0
-                            |> Maybe.withDefault { startRowIndex = 0, endRowIndex = 0, startIndex = 0, endIndex = 0, value = 0 }
+                            |> Maybe.withDefault { startRowIndex = 0, startIndex = 0, endIndex = 0, value = 0 }
                             |> .startIndex
                 in
                 Expect.equal startIndex 0
         , test "should correctly parse sample input - 2nd number startIndex legit" <|
             \_ ->
                 let
-                    ( partNumbers, _, _ ) =
+                    ( partNumbers, _ ) =
                         parseRows inputAcrossLines
 
                     startIndex =
                         partNumbers
                             |> Array.fromList
                             |> Array.get 1
-                            |> Maybe.withDefault { startRowIndex = 0, endRowIndex = 0, startIndex = 0, endIndex = 0, value = 0 }
+                            |> Maybe.withDefault { startRowIndex = 0, startIndex = 0, endIndex = 0, value = 0 }
                             |> .startIndex
                 in
                 Expect.equal startIndex 5
         , test "should correctly parse sample input - 2nd number endIndex legit" <|
             \_ ->
                 let
-                    ( partNumbers, _, _ ) =
+                    ( partNumbers, _ ) =
                         parseRows inputAcrossLines
 
                     endIndex =
                         partNumbers
                             |> Array.fromList
                             |> Array.get 1
-                            |> Maybe.withDefault { startRowIndex = 0, endRowIndex = 0, startIndex = 0, endIndex = 0, value = 0 }
+                            |> Maybe.withDefault { startRowIndex = 0, startIndex = 0, endIndex = 0, value = 0 }
                             |> .endIndex
                 in
                 Expect.equal endIndex 7
         , test "should correctly parse sample input - 3rd number startIndex legit" <|
             \_ ->
                 let
-                    ( partNumbers, _, _ ) =
+                    ( partNumbers, _ ) =
                         parseRows inputAcrossLines
 
                     startIndex =
                         partNumbers
                             |> Array.fromList
                             |> Array.get 2
-                            |> Maybe.withDefault { startRowIndex = 0, endRowIndex = 0, startIndex = 0, endIndex = 0, value = 0 }
+                            |> Maybe.withDefault { startRowIndex = 0, startIndex = 0, endIndex = 0, value = 0 }
                             |> .startIndex
                 in
                 Expect.equal startIndex 9
         , test "should correctly parse sample input - 3rd number endIndex legit" <|
             \_ ->
                 let
-                    ( partNumbers, _, _ ) =
+                    ( partNumbers, _ ) =
                         parseRows """467..114.9
 12.*......
 ..35..633."""
@@ -115,13 +107,13 @@ parseRowsSuite =
                         partNumbers
                             |> Array.fromList
                             |> Array.get 2
-                            |> Maybe.withDefault { startRowIndex = 0, endRowIndex = 0, startIndex = 0, endIndex = 0, value = 0 }
+                            |> Maybe.withDefault { startRowIndex = 0, startIndex = 0, endIndex = 0, value = 0 }
                 in
-                Expect.equal part.endIndex 1
+                Expect.equal part.endIndex 9
         , test "should correctly parse sample input - 4th number startIndex legit" <|
             \_ ->
                 let
-                    ( partNumbers, _, _ ) =
+                    ( partNumbers, _ ) =
                         parseRows """467..114.9
 12.*......
 ..35..633."""
@@ -130,14 +122,14 @@ parseRowsSuite =
                         partNumbers
                             |> Array.fromList
                             |> Array.get 3
-                            |> Maybe.withDefault { startRowIndex = 0, endRowIndex = 0, startIndex = 0, endIndex = 0, value = 0 }
+                            |> Maybe.withDefault { startRowIndex = 0, startIndex = 0, endIndex = 0, value = 0 }
                             |> .startIndex
                 in
-                Expect.equal startIndex 2
+                Expect.equal startIndex 0
         , test "should correctly parse sample input - 4th number endIndex legit" <|
             \_ ->
                 let
-                    ( partNumbers, _, _ ) =
+                    ( partNumbers, _ ) =
                         parseRows """467..114.9
 12.*......
 ..35..633."""
@@ -146,9 +138,9 @@ parseRowsSuite =
                         partNumbers
                             |> Array.fromList
                             |> Array.get 3
-                            |> Maybe.withDefault { startRowIndex = 0, endRowIndex = 0, startIndex = 0, endIndex = 0, value = 0 }
+                            |> Maybe.withDefault { startRowIndex = 0, startIndex = 0, endIndex = 0, value = 0 }
                 in
-                Expect.equal part.endIndex 3
+                Expect.equal part.endIndex 1
         ]
 
 
@@ -375,54 +367,6 @@ parsePartNumbersFromRowsSuite =
                     --     Debug.log "missing" missing
                 in
                 Expect.equal expectedList True
-        , test "random sample input test 5" <|
-            \_ ->
-                let
-                    partNumbers =
-                        """....*.......................885.....*...123.=...641...&188..577.......339..688.........287.684..219.........................+...........*...
-...61........397...#386...=........313........-...&............*......*................@.............../.........621+....................169
-..............*.........34..................934..........17..168..320..263.........412.......$......966.....................303.....554....."""
-                            |> parsePartNumbersFromRows
-
-                    _ =
-                        Debug.log "partNumbers" partNumbers
-                in
-                Expect.equal True True
-        , test "random sample input test 6" <|
-            \_ ->
-                let
-                    partNumbers =
-                        puzzleInputDay3
-                            |> parsePartNumbersFromRows
-                in
-                Expect.equal True True
-        , only <|
-            test "random sample input test 7" <|
-                \_ ->
-                    let
-                        partsAndRows =
-                            puzzleInputDay3
-                                |> parsePartNumbersFromRows
-
-                        partNumbers =
-                            partsAndRows
-                                |> .partNumbers
-                                |> List.map .value
-
-                        rogueValues =
-                            partsAndRows
-                                |> .rogueNumbers
-
-                        rogueValuesInPartNumbers =
-                            partsAndRows
-                                |> .rogueNumbers
-                                |> List.filter
-                                    (\rogueNumber -> List.member rogueNumber partNumbers)
-
-                        _ =
-                            Debug.log "partNumbers" partNumbers
-                    in
-                    Expect.equal True True
         ]
 
 
@@ -440,9 +384,7 @@ numberNextToSymbolSuite =
                     -- ...*......
                     nextTo =
                         numberNextToSymbol
-                            10
                             { startRowIndex = 0
-                            , endRowIndex = 0
                             , startIndex = 0
                             , endIndex = 2
                             , value = 467
@@ -460,9 +402,7 @@ numberNextToSymbolSuite =
                     -- ...*......
                     nextTo =
                         numberNextToSymbol
-                            10
                             { startRowIndex = 0
-                            , endRowIndex = 0
                             , startIndex = 5
                             , endIndex = 7
                             , value = 114
@@ -480,9 +420,7 @@ numberNextToSymbolSuite =
                     -- ..35..633.
                     nextTo =
                         numberNextToSymbol
-                            10
                             { startRowIndex = 0
-                            , endRowIndex = 0
                             , startIndex = 2
                             , endIndex = 3
                             , value = 35
@@ -500,9 +438,7 @@ numberNextToSymbolSuite =
                     -- ..35..633.
                     nextTo =
                         numberNextToSymbol
-                            10
                             { startRowIndex = 0
-                            , endRowIndex = 0
                             , startIndex = 6
                             , endIndex = 8
                             , value = 633
@@ -519,9 +455,7 @@ numberNextToSymbolSuite =
                     -- 617*......
                     nextTo =
                         numberNextToSymbol
-                            10
                             { startRowIndex = 0
-                            , endRowIndex = 0
                             , startIndex = 0
                             , endIndex = 2
                             , value = 617
@@ -537,9 +471,7 @@ numberNextToSymbolSuite =
                 let
                     ( nextTo, _ ) =
                         numberNextToSymbolCached
-                            10
                             { startRowIndex = 1
-                            , endRowIndex = 1
                             , startIndex = 0
                             , endIndex = 2
                             , value = 617
@@ -556,9 +488,7 @@ numberNextToSymbolSuite =
                 let
                     ( _, newCache ) =
                         numberNextToSymbolCached
-                            10
                             { startRowIndex = 1
-                            , endRowIndex = 1
                             , startIndex = 0
                             , endIndex = 2
                             , value = 617
@@ -575,9 +505,7 @@ numberNextToSymbolSuite =
                 let
                     ( _, newCache ) =
                         numberNextToSymbolCached
-                            10
                             { startRowIndex = 1
-                            , endRowIndex = 1
                             , startIndex = 0
                             , endIndex = 2
                             , value = 617
@@ -600,20 +528,17 @@ filterValidPartNumberSuite =
                 let
                     validPartNumberList =
                         filterValidPartNumber
-                            10
                             [ { rowIndex = 1
                               , index = 3
                               , value = '*'
                               }
                             ]
                             [ { startRowIndex = 1
-                              , endRowIndex = 1
                               , startIndex = 0
                               , endIndex = 2
                               , value = 617
                               }
                             , { startRowIndex = 18
-                              , endRowIndex = 18
                               , startIndex = 18
                               , endIndex = 20
                               , value = 617
@@ -625,7 +550,7 @@ filterValidPartNumberSuite =
                             |> Array.fromList
                             |> Array.get 0
                             |> Maybe.withDefault
-                                { startRowIndex = 0, endRowIndex = 0, startIndex = 0, endIndex = 0, value = 0 }
+                                { startRowIndex = 0, startIndex = 0, endIndex = 0, value = 0 }
                 in
                 Expect.equal validPartNumber.value 617
         ]
@@ -648,7 +573,7 @@ day3Suite =
                 -- Expect.equal (sumPartNumbers puzzleInput) 281663 -- Wrong, too low
                 -- Expect.equal (sumPartNumbers puzzleInputDay3) 548402
                 -- Expect.equal (sumPartNumbers puzzleInput) 573992
-                Expect.equal (sumPartNumbers puzzleInputDay3) 1408110
+                Expect.equal (sumPartNumbers puzzleInputDay3) 575943
 
         -- 281663 -- somehow I'm now getting this... what
         -- Expect.equal (sumPartNumbers largeSampleDay3) 1000
