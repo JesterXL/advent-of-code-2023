@@ -1,8 +1,8 @@
 module Day3 exposing (..)
 
+import Array exposing (Array)
 import Char exposing (isDigit)
-import Html exposing (th)
-import List.Extra exposing (Step(..), indexedFoldl, stoppableFoldl)
+import List.Extra exposing (Step(..), find, indexedFoldl, stoppableFoldl)
 import Set exposing (Set)
 
 
@@ -44,6 +44,10 @@ parseRows input =
                 |> String.toList
                 |> indexedFoldl
                     (\index char acc ->
+                        -- let
+                        --     _ =
+                        --         Debug.log "char" char
+                        -- in
                         if isDigit char == True then
                             if acc.tracking == True then
                                 { acc
@@ -79,6 +83,12 @@ parseRows input =
 
                         else if char == '.' then
                             if acc.tracking == True then
+                                -- let
+                                --     _ =
+                                --         Debug.log "tracked" acc.digits
+                                --     _ =
+                                --         Debug.log "dat value" (String.fromList acc.digits |> String.toInt |> Maybe.withDefault 0)
+                                -- in
                                 { acc
                                     | tracking = False
                                     , parts =
@@ -96,6 +106,10 @@ parseRows input =
                                 acc
 
                         else if acc.tracking == True then
+                            -- let
+                            --     _ =
+                            --         Debug.log "syms 1" char
+                            -- in
                             { acc
                                 | tracking = False
                                 , parts =
@@ -115,6 +129,10 @@ parseRows input =
                             }
 
                         else
+                            -- let
+                            --     _ =
+                            --         Debug.log "syms 2" char
+                            -- in
                             { acc
                                 | syms =
                                     acc.syms
@@ -159,6 +177,12 @@ parsePartNumbersFromRows input =
                 allSymbols
                 allPartNumbers
 
+        html =
+            linesAndPartNumbersToHTML allPartNumbers validPartNumbers2 (String.lines input)
+
+        _ =
+            Debug.log "html" html
+
         -- _ =
         --     Debug.log "2 validPartNumbers2" (validPartNumbers2 |> List.map .value)
         validValues =
@@ -184,12 +208,86 @@ parsePartNumbersFromRows input =
     }
 
 
+linesAndPartNumbersToHTML : List PartNumber -> List PartNumber -> List String -> String
+linesAndPartNumbersToHTML allPartNumbers validPartNumbers lines =
+    let
+        validValues =
+            validPartNumbers
+                |> List.map .value
+
+        rogueParts =
+            allPartNumbers
+                |> List.filter
+                    (\part ->
+                        List.member part.value validValues == False
+                    )
+
+        isRoguePart : PartNumber -> Bool
+        isRoguePart roguePartMaybe =
+            case find (\validPart -> validPart.value == roguePartMaybe.value) validPartNumbers of
+                Nothing ->
+                    True
+
+                Just _ ->
+                    False
+
+        allParts =
+            validPartNumbers ++ rogueParts
+
+        linesArray =
+            Array.fromList lines
+
+        getLine : Int -> Array String -> String
+        getLine index array =
+            Array.get index array
+                |> Maybe.withDefault ""
+
+        setLine : Int -> Array String -> String -> Array String
+        setLine index array value =
+            Array.set index value array
+
+        htmlLines =
+            allParts
+                |> List.foldl
+                    (\part acc ->
+                        if isRoguePart part == True then
+                            let
+                                _ =
+                                    Debug.log "part.value" part.value
+                            in
+                            getLine
+                                part.startRowIndex
+                                acc
+                                |> String.replace
+                                    (String.fromInt part.value)
+                                    ("""<span style='color: red;'>""" ++ String.fromInt part.value ++ "</span>")
+                                |> setLine part.startRowIndex acc
+
+                        else
+                            getLine part.startRowIndex acc
+                                |> String.replace
+                                    (String.fromInt part.value)
+                                    ("""<span style='color: green;'>""" ++ String.fromInt part.value ++ "</span>")
+                                |> setLine part.startRowIndex acc
+                    )
+                    linesArray
+                |> Array.foldl
+                    (\html acc ->
+                        acc ++ html ++ "<br />"
+                    )
+                    ""
+
+        htmlPage =
+            "<html><head><title>Sample</title>"
+                ++ "</head><body style='font-family: monospace;'>"
+                ++ htmlLines
+                ++ "</body></html>"
+    in
+    htmlPage
+
+
 filterValidPartNumber : Int -> List Symbol -> List PartNumber -> List PartNumber
 filterValidPartNumber columnSize symbols partNumbers =
-    let
-        mainCache =
-            Set.empty
-    in
     List.foldl
         (\partNumber ( matchingParts, topCache ) ->
             let
@@ -206,7 +304,7 @@ filterValidPartNumber columnSize symbols partNumbers =
             else
                 ( matchingParts, updatedCache )
         )
-        ( [], mainCache )
+        ( [], Set.empty )
         partNumbers
         |> Tuple.first
 

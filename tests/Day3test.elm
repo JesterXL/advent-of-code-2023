@@ -1,7 +1,7 @@
 module Day3test exposing (..)
 
 import Array exposing (Array)
-import Day3 exposing (day3Part1, filterValidPartNumber, inputAcrossLines, numberNextToSymbol, numberNextToSymbolCached, parsePartNumbersFromRows, parseRows, puzzleInputDay3, sampleInput, sampleInputWithDupes, sumPartNumbers)
+import Day3 exposing (PartNumbersFromRows, day3Part1, filterValidPartNumber, inputAcrossLines, numberNextToSymbol, numberNextToSymbolCached, parsePartNumbersFromRows, parseRows, puzzleInputDay3, sampleInput, sampleInputWithDupes, sumPartNumbers)
 import Expect exposing (Expectation)
 import Fuzz exposing (Fuzzer, floatRange, int, list, string)
 import Set
@@ -37,9 +37,6 @@ parseRowsSuite =
                 let
                     ( partNumbers, _, _ ) =
                         parseRows inputAcrossLines
-
-                    _ =
-                        Debug.log "wat" (partNumbers |> List.map .value)
                 in
                 Expect.equal (List.length partNumbers) 5
         , test "should measure columnSize correctly for 1 row" <|
@@ -290,9 +287,6 @@ parsePartNumbersFromRowsSuite =
                     partNumbersFromRows =
                         parsePartNumbersFromRows
                             sampleInput
-
-                    _ =
-                        Debug.log "partNumbersFromRows" (partNumbersFromRows |> .partNumbers |> List.map .value)
                 in
                 Expect.equal (List.length partNumbersFromRows.partNumbers) 8
         , test "should not contain 114" <|
@@ -315,7 +309,125 @@ parsePartNumbersFromRowsSuite =
                             |> List.map .value
                 in
                 Expect.equal (List.member 58 partNumbers) False
+        , test "random sample input test 1" <|
+            \_ ->
+                let
+                    partNumbers =
+                        """....*.......................885.....*...123.=...641...&188..577.......339..688.........287.684..219.........................+...........*...
+...61........397...#386...=........313........-...&............*......*................@.............../.........621+....................169
+..............*.........34..................934..........17..168..320..263.........412.......$......966.....................303.....554....."""
+                            |> parsePartNumbersFromRows
+                            |> .partNumbers
+                            |> List.map .value
+                in
+                Expect.equal (List.member 621 partNumbers) True
+        , test "random sample input test 2" <|
+            \_ ->
+                let
+                    partNumbers =
+                        """....*.....................&885*.....*...123.=...641...&188..577.......339..688.........287.684..219.........................+...........*...
+...61........397...#386...=........313........-...&............*......*................@.............../.........621+....................169
+..............*.........34..................934..........17..168..320..263.........412.......$......966.....................303.....554....."""
+                            |> parsePartNumbersFromRows
+                            |> .partNumbers
+                            |> List.map .value
+                in
+                Expect.equal (List.member 885 partNumbers) True
+        , test "random sample input test 3" <|
+            \_ ->
+                let
+                    partNumbers =
+                        """....*.......................885.....*...123.=...641...&188..577.......339..688.........287.684..219.........................+...........*...
+...61........397...#386...=........313........-...&............*......*................@.............../.........621+....................169
+..............*.........34..................934..........17..168..320..263.........412.......$......966.....................303.....554....."""
+                            |> parsePartNumbersFromRows
+                            |> .partNumbers
+                            |> List.map .value
+                in
+                Expect.equal (List.member 169 partNumbers) True
+        , test "random sample input test 4" <|
+            \_ ->
+                let
+                    partNumbers =
+                        """.......471....555..*.....*......*.../................749...........*......*..........92*756................336.....241.581..................
+...................904..762..681..695.&639..903&......*.........753........936...................683-..........921..*......654....7.470.....
+.........16*494.....................................395..112...........=..................601..........+..........*.901.......*....*........"""
+                            |> parsePartNumbersFromRows
+                            |> .partNumbers
+                            |> List.map .value
+
+                    expected =
+                        [ 16, 494, 904, 762, 681, 695, 639, 903, 749, 395, 753, 936, 92, 756, 683, 921, 241, 901, 654, 7, 470 ]
+
+                    expectedList =
+                        expected
+                            |> List.all
+                                (\item -> List.member item partNumbers)
+
+                    missing =
+                        expected
+                            |> List.filter
+                                (\item ->
+                                    List.member item partNumbers == False
+                                )
+
+                    -- _ =
+                    --     Debug.log "missing" missing
+                in
+                Expect.equal expectedList True
+        , test "random sample input test 5" <|
+            \_ ->
+                let
+                    partNumbers =
+                        """....*.......................885.....*...123.=...641...&188..577.......339..688.........287.684..219.........................+...........*...
+...61........397...#386...=........313........-...&............*......*................@.............../.........621+....................169
+..............*.........34..................934..........17..168..320..263.........412.......$......966.....................303.....554....."""
+                            |> parsePartNumbersFromRows
+
+                    _ =
+                        Debug.log "partNumbers" partNumbers
+                in
+                Expect.equal True True
+        , test "random sample input test 6" <|
+            \_ ->
+                let
+                    partNumbers =
+                        puzzleInputDay3
+                            |> parsePartNumbersFromRows
+                in
+                Expect.equal True True
+        , only <|
+            test "random sample input test 7" <|
+                \_ ->
+                    let
+                        partsAndRows =
+                            puzzleInputDay3
+                                |> parsePartNumbersFromRows
+
+                        partNumbers =
+                            partsAndRows
+                                |> .partNumbers
+                                |> List.map .value
+
+                        rogueValues =
+                            partsAndRows
+                                |> .rogueNumbers
+
+                        rogueValuesInPartNumbers =
+                            partsAndRows
+                                |> .rogueNumbers
+                                |> List.filter
+                                    (\rogueNumber -> List.member rogueNumber partNumbers)
+
+                        _ =
+                            Debug.log "partNumbers" partNumbers
+                    in
+                    Expect.equal True True
         ]
+
+
+
+-- ..123.=..
 
 
 numberNextToSymbolSuite : Test
