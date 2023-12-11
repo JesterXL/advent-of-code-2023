@@ -568,13 +568,15 @@ day3Suite =
         , test "day3Part1 should work with inputAcrossLines" <|
             \_ ->
                 Expect.equal (sumPartNumbers inputAcrossLines) 502
-        , test "day3Part1 should work with puzzle input" <|
-            \_ ->
-                -- Expect.equal (sumPartNumbers puzzleInput) 281663 -- Wrong, too low
-                -- Expect.equal (sumPartNumbers puzzleInputDay3) 548402
-                -- Expect.equal (sumPartNumbers puzzleInput) 573992
-                Expect.equal (sumPartNumbers puzzleInputDay3) 575943
+        , only <|
+            test "day3Part1 should work with puzzle input" <|
+                \_ ->
+                    -- Expect.equal (sumPartNumbers puzzleInput) 281663 -- Wrong, too low
+                    -- Expect.equal (sumPartNumbers puzzleInputDay3) 548402
+                    -- Expect.equal (sumPartNumbers puzzleInput) 573992
+                    Expect.equal (sumPartNumbers puzzleInputDay3) 575943
 
+        -- Wrong
         -- 281663 -- somehow I'm now getting this... what
         -- Expect.equal (sumPartNumbers largeSampleDay3) 1000
         -- Wrong, too low

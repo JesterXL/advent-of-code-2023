@@ -150,8 +150,9 @@ parsePartNumbersFromRows input =
         html =
             linesAndPartNumbersToHTML allPartNumbers validPartNumbers2 (String.lines input)
 
-        -- _ =
-        --     Debug.log "html" html
+        _ =
+            Debug.log "html" html
+
         -- _ =
         --     Debug.log "2 validPartNumbers2" (validPartNumbers2 |> List.map .value)
         validValues =
@@ -167,8 +168,9 @@ parsePartNumbersFromRows input =
                         List.member value validValues == False
                     )
 
-        -- _ =
-        --     Debug.log "validValues" validValues
+        _ =
+            Debug.log "validValues" (List.sort validValues)
+
         -- _ =
         --     Debug.log "rogueNumbers" rogueNumbers
     in
@@ -260,11 +262,22 @@ filterValidPartNumber symbols partNumbers =
     List.foldl
         (\partNumber ( matchingParts, topCache ) ->
             let
-                ( nextTo, updatedCache ) =
-                    filterPartNumbersNextToSymbol
+                -- ( nextTo, updatedCache ) =
+                --     filterPartNumbersNextToSymbol
+                --         symbols
+                --         partNumber
+                --         topCache
+                nextTo =
+                    List.any
+                        (\symbol ->
+                            numberNextToSymbol
+                                partNumber
+                                symbol
+                        )
                         symbols
-                        partNumber
-                        topCache
+
+                updatedCache =
+                    Set.empty
             in
             if nextTo == True then
                 ( matchingParts ++ [ partNumber ], updatedCache )
